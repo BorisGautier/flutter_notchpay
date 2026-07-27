@@ -1,0 +1,394 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../client/notchpay_exception.dart';
+import '../l10n/notchpay_localizations.dart';
+import '../models/notchpay_channel.dart';
+import '../models/notchpay_checkout_request.dart';
+import '../models/notchpay_checkout_result.dart';
+import '../models/notchpay_payment.dart';
+import '../models/notchpay_payment_status.dart';
+import '../services/notchpay_payment_service.dart';
+import '../services/notchpay_resource_service.dart';
+import '../utils/notchpay_currency_formatter.dart';
+import 'theme/notchpay_theme.dart';
+import 'widgets/notchpay_channel_grid.dart';
+import 'widgets/notchpay_mobile_money_form.dart';
+import 'widgets/notchpay_status_view.dart';
+
+const _pollInterval = Duration(seconds: 4);
+const _pollTimeout = Duration(minutes: 5);
+
+const _mobileMoneyKinds = {
+  NotchPayChannelKind.mtn,
+  NotchPayChannelKind.orange,
+  NotchPayChannelKind.mobileMoney,
+};
+
+/// Opens NotchPay's built-in checkout bottom sheet and drives a full
+/// payment to completion, returning once the sheet is dismissed.
+///
+/// You normally don't call this directly — use `NotchPay.checkout` instead,
+/// which supplies [paymentService] and [resourceService] for you.
+Future<NotchPayCheckoutResult> showNotchPayCheckout(
+  BuildContext context, {
+  required NotchPayPaymentService paymentService,
+  required NotchPayResourceService resourceService,
+  required NotchPayCheckoutRequest request,
+  String countryCode = 'cm',
+  NotchPayThemeData theme = const NotchPayThemeData(),
+  NotchPayLocalizations? localizations,
+}) async {
+  final resolvedTheme = theme.resolve(context);
+  final result = await showModalBottomSheet<NotchPayCheckoutResult>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) {
+      final sheet = NotchPayTheme(
+        data: resolvedTheme,
+        child: _NotchPayCheckoutSheet(
+          paymentService: paymentService,
+          resourceService: resourceService,
+          request: request,
+          countryCode: countryCode,
+        ),
+      );
+      if (localizations == null) return sheet;
+      return NotchPayLocalizationsProvider(data: localizations, child: sheet);
+    },
+  );
+  return result ?? const NotchPayCheckoutResult.cancelled();
+}
+
+enum _Step { loading, selectChannel, mobileMoneyForm, processing, result }
+
+class _NotchPayCheckoutSheet extends StatefulWidget {
+  const _NotchPayCheckoutSheet({
+    required this.paymentService,
+    required this.resourceService,
+    required this.request,
+    required this.countryCode,
+  });
+
+  final NotchPayPaymentService paymentService;
+  final NotchPayResourceService resourceService;
+  final NotchPayCheckoutRequest request;
+  final String countryCode;
+
+  @override
+  State<_NotchPayCheckoutSheet> createState() => _NotchPayCheckoutSheetState();
+}
+
+class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
+  _Step _step = _Step.loading;
+  List<NotchPayChannel> _channels = const [];
+  NotchPayChannel? _selectedChannel;
+  NotchPayPayment? _payment;
+  String? _mobileMoneyError;
+  String? _failureMessage;
+  bool _submitting = false;
+  Timer? _pollTimer;
+  DateTime? _pollStartedAt;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_initialize());
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      final payment = await widget.paymentService.initialize(widget.request);
+      final channels =
+          await widget.resourceService.channels(country: widget.countryCode);
+      if (!mounted) return;
+      setState(() {
+        _payment = payment;
+        _channels = channels;
+        _step = _Step.selectChannel;
+      });
+    } on NotchPayException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _failureMessage = error.message;
+        _step = _Step.result;
+      });
+    }
+  }
+
+  void _selectChannel(NotchPayChannel channel) {
+    setState(() {
+      _selectedChannel = channel;
+      _mobileMoneyError = null;
+      _step = _mobileMoneyKinds.contains(channel.kind)
+          ? _Step.mobileMoneyForm
+          : _Step.loading;
+    });
+    if (!_mobileMoneyKinds.contains(channel.kind)) {
+      unawaited(_startRedirectFlow(channel));
+    }
+  }
+
+  Future<void> _submitMobileMoney(String phone) async {
+    final payment = _payment;
+    final channel = _selectedChannel;
+    if (payment == null || channel == null) return;
+
+    setState(() {
+      _submitting = true;
+      _mobileMoneyError = null;
+    });
+    try {
+      final updated = await widget.paymentService.complete(
+        payment.reference,
+        channel: channel.code,
+        data: {'phone': phone},
+      );
+      if (!mounted) return;
+      setState(() {
+        _payment = updated;
+        _submitting = false;
+        _step = _Step.processing;
+      });
+      _startPolling();
+    } on NotchPayException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _mobileMoneyError = error.message;
+      });
+    }
+  }
+
+  Future<void> _startRedirectFlow(NotchPayChannel channel) async {
+    final payment = _payment;
+    if (payment == null) return;
+
+    try {
+      var current = payment;
+      if (current.authorizationUrl == null) {
+        current = await widget.paymentService
+            .complete(current.reference, channel: channel.code);
+      }
+      if (!mounted) return;
+      setState(() => _payment = current);
+
+      final url = current.authorizationUrl;
+      if (url != null) {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+        }
+      }
+      if (!mounted) return;
+      setState(() => _step = _Step.processing);
+      _startPolling();
+    } on NotchPayException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _failureMessage = error.message;
+        _step = _Step.result;
+      });
+    }
+  }
+
+  void _startPolling() {
+    _pollStartedAt = DateTime.now();
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(_pollInterval, (_) => unawaited(_poll()));
+  }
+
+  Future<void> _poll() async {
+    final payment = _payment;
+    if (payment == null) return;
+
+    final startedAt = _pollStartedAt;
+    if (startedAt != null &&
+        DateTime.now().difference(startedAt) > _pollTimeout) {
+      _pollTimer?.cancel();
+      if (!mounted) return;
+      setState(() => _step = _Step.result);
+      return;
+    }
+
+    try {
+      final updated = await widget.paymentService.fetch(payment.reference);
+      if (!mounted) return;
+      setState(() => _payment = updated);
+      if (updated.status.isFinal) {
+        _pollTimer?.cancel();
+        setState(() => _step = _Step.result);
+      }
+    } on NotchPayException {
+      // Transient network hiccup while polling: keep trying until timeout.
+    }
+  }
+
+  void _close([NotchPayCheckoutResult? result]) {
+    Navigator.of(context)
+        .pop(result ?? const NotchPayCheckoutResult.cancelled());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = NotchPayTheme.of(context);
+    final l10n = NotchPayLocalizations.of(context);
+
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.surfaceColor,
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(theme.borderRadius)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color:
+                      (theme.mutedColor ?? Colors.grey).withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    NotchPayCurrencyFormatter.format(
+                      widget.request.amount,
+                      widget.request.currency,
+                    ),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: theme.onSurfaceColor,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: _close,
+                  icon: Icon(Icons.close_rounded, color: theme.mutedColor),
+                  tooltip: l10n.close,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 220),
+              child: _buildStep(theme, l10n),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStep(NotchPayThemeData theme, NotchPayLocalizations l10n) {
+    switch (_step) {
+      case _Step.loading:
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 48),
+          child: Center(child: CircularProgressIndicator()),
+        );
+      case _Step.selectChannel:
+        return Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.choosePaymentMethod,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: theme.mutedColor,
+                ),
+              ),
+              const SizedBox(height: 12),
+              NotchPayChannelGrid(
+                  channels: _channels, onSelected: _selectChannel),
+            ],
+          ),
+        );
+      case _Step.mobileMoneyForm:
+        return NotchPayMobileMoneyForm(
+          initialKind:
+              _selectedChannel?.kind ?? NotchPayChannelKind.mobileMoney,
+          loading: _submitting,
+          errorText: _mobileMoneyError,
+          onSubmit: _submitMobileMoney,
+        );
+      case _Step.processing:
+        return NotchPayProcessingView(
+          message: _selectedChannel != null &&
+                  _mobileMoneyKinds.contains(_selectedChannel!.kind)
+              ? l10n.mobileMoneyInstructions
+              : l10n.redirectInstructions,
+        );
+      case _Step.result:
+        return _buildResult(l10n);
+    }
+  }
+
+  Widget _buildResult(NotchPayLocalizations l10n) {
+    final payment = _payment;
+    final failureMessage = _failureMessage;
+
+    if (failureMessage != null || payment == null || !payment.status.isFinal) {
+      final message = failureMessage ?? l10n.genericErrorMessage;
+      return NotchPayResultView(
+        success: false,
+        title: l10n.paymentFailedTitle,
+        message: message,
+        doneLabel: l10n.done,
+        onDone: () =>
+            _close(NotchPayCheckoutResult.failed(message, payment: payment)),
+      );
+    }
+
+    if (payment.status.isSuccess) {
+      return NotchPayResultView(
+        success: true,
+        title: l10n.paymentSuccessTitle,
+        message: l10n.paymentSuccessMessage,
+        doneLabel: l10n.done,
+        onDone: () => _close(NotchPayCheckoutResult.success(payment)),
+      );
+    }
+
+    final title = switch (payment.status) {
+      NotchPayPaymentStatus.canceled => l10n.paymentCancelledTitle,
+      NotchPayPaymentStatus.expired => l10n.paymentExpiredTitle,
+      _ => l10n.paymentFailedTitle,
+    };
+    return NotchPayResultView(
+      success: false,
+      title: title,
+      message: l10n.genericErrorMessage,
+      doneLabel: l10n.done,
+      onDone: () =>
+          _close(NotchPayCheckoutResult.failed(title, payment: payment)),
+    );
+  }
+}

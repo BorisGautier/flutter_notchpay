@@ -1,0 +1,20 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    prefer_relative_imports: true
+    always_declare_return_types: true
+    avoid_print: true
+    sort_constructors_first: true
+    unnecessary_lambdas: true
+    unawaited_futures: true
+    # Every public class, member and parameter must carry a dartdoc comment.
+    # This is an open source SDK: undocumented public API is treated as a
+    # lint error, not a suggestion, so CI catches it on every PR.
+    public_member_api_docs: true
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "example/**"

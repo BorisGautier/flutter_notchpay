@@ -1,0 +1,41 @@
+name: Publish to pub.dev
+
+# Triggered by pushing a tag like `v1.2.3`. Typical flow:
+#   1. Bump `version:` in pubspec.yaml and add a CHANGELOG.md entry on `dev`.
+#   2. Merge `dev` into `main`.
+#   3. `git tag v1.2.3 && git push origin v1.2.3`
+#
+# Publishing itself uses pub.dev's OIDC-based "automated publishing": no
+# long-lived credentials are stored in this repository. A maintainer must
+# first enable it for this package at
+# https://pub.dev/packages/flutter_notchpay/admin, pointing it at the
+# `github.com/BorisGautier/flutter_notchpay` repository and this workflow
+# file (`release.yml`).
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+  test:
+    name: Test before publishing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: flutter analyze --fatal-infos
+      - run: flutter test
+
+  publish:
+    name: Publish
+    needs: test
+    permissions:
+      id-token: write # Required for pub.dev's OIDC authentication.
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1

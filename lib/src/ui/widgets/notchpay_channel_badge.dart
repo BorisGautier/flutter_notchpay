@@ -1,0 +1,95 @@
+import 'package:flutter/material.dart';
+
+import '../../models/notchpay_channel.dart';
+
+/// A small colored badge representing a payment channel (MTN, Orange,
+/// Card, ...).
+///
+/// Drawn entirely with [Icon]s and solid colors rather than bundled
+/// trademarked logos, so the package stays lightweight and legally simple
+/// to distribute while still giving each channel an instantly recognizable
+/// identity.
+class NotchPayChannelBadge extends StatelessWidget {
+  /// Creates a badge for the given channel [kind], [size] pixels wide/tall.
+  const NotchPayChannelBadge({super.key, required this.kind, this.size = 40});
+
+  /// Which channel family to represent.
+  final NotchPayChannelKind kind;
+
+  /// The width and height of the badge, in logical pixels.
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = _styleFor(kind);
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: style.background,
+        borderRadius: BorderRadius.circular(size * 0.3),
+      ),
+      child: style.label != null
+          ? Text(
+              style.label!,
+              style: TextStyle(
+                color: style.foreground,
+                fontWeight: FontWeight.w800,
+                fontSize: size * 0.34,
+                letterSpacing: -0.5,
+              ),
+            )
+          : Icon(style.icon, color: style.foreground, size: size * 0.55),
+    );
+  }
+
+  _BadgeStyle _styleFor(NotchPayChannelKind kind) {
+    return switch (kind) {
+      NotchPayChannelKind.mtn => const _BadgeStyle(
+          background: Color(0xFFFFCC00),
+          foreground: Color(0xFF1A1A1A),
+          label: 'MTN',
+        ),
+      NotchPayChannelKind.orange => const _BadgeStyle(
+          background: Color(0xFFFF6600),
+          foreground: Colors.white,
+          label: 'OM',
+        ),
+      NotchPayChannelKind.mobileMoney => const _BadgeStyle(
+          background: Color(0xFF0EA5E9),
+          foreground: Colors.white,
+          icon: Icons.phone_iphone_rounded,
+        ),
+      NotchPayChannelKind.card => const _BadgeStyle(
+          background: Color(0xFF6366F1),
+          foreground: Colors.white,
+          icon: Icons.credit_card_rounded,
+        ),
+      NotchPayChannelKind.bank => const _BadgeStyle(
+          background: Color(0xFF0F766E),
+          foreground: Colors.white,
+          icon: Icons.account_balance_rounded,
+        ),
+      NotchPayChannelKind.other => const _BadgeStyle(
+          background: Color(0xFF6B7280),
+          foreground: Colors.white,
+          icon: Icons.payments_rounded,
+        ),
+    };
+  }
+}
+
+class _BadgeStyle {
+  const _BadgeStyle({
+    required this.background,
+    required this.foreground,
+    this.icon,
+    this.label,
+  });
+
+  final Color background;
+  final Color foreground;
+  final IconData? icon;
+  final String? label;
+}

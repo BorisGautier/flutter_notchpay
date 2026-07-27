@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: NotchPay API documentation
+    url: https://developers.notchpay.co
+    about: Questions about the NotchPay API itself (not this Flutter package) belong here.
+  - name: Security vulnerability
+    url: https://github.com/BorisGautier/flutter_notchpay/security/policy
+    about: Please report security issues privately instead of opening a public issue — see SECURITY.md.

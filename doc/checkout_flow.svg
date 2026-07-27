@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" width="960" height="340" font-family="'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8f5fc"/>
+      <stop offset="1" stop-color="#efe6f7"/>
+    </linearGradient>
+    <style>
+      .card { fill: #ffffff; stroke: #e6dcf0; stroke-width: 1.5; }
+      .title { fill: #14151a; font-size: 15px; font-weight: 700; }
+      .muted { fill: #6b7280; font-size: 12px; }
+      .brand { fill: #5B2A86; }
+      .pill { fill: #f3edf9; }
+      .badge-mtn { fill: #FFCC00; }
+      .badge-om { fill: #FF6600; }
+      .success { fill: #16A34A; }
+      .step-label { fill: #5B2A86; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+      .arrow { stroke: #c9b8de; stroke-width: 2; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="960" height="340" fill="url(#bg)" rx="20"/>
+
+  <!-- Screen 1: choose channel -->
+  <g transform="translate(30,30)">
+    <text class="step-label" x="0" y="-10">1. CHOOSE PAYMENT METHOD</text>
+    <rect class="card" x="0" y="0" width="270" height="270" rx="24"/>
+    <rect x="20" y="24" width="230" height="14" rx="7" class="pill"/>
+    <rect x="20" y="60" width="120" height="10" rx="5" fill="#9ca3af"/>
+
+    <rect x="20" y="86" width="230" height="52" rx="14" fill="#ffffff" stroke="#eee2f7" stroke-width="1.5"/>
+    <circle cx="46" cy="112" r="16" class="badge-mtn"/>
+    <text x="46" y="117" font-size="10" font-weight="800" text-anchor="middle" fill="#1a1a1a">MTN</text>
+    <text x="74" y="117" class="title" font-size="13">MTN Mobile Money</text>
+
+    <rect x="20" y="150" width="230" height="52" rx="14" fill="#ffffff" stroke="#eee2f7" stroke-width="1.5"/>
+    <circle cx="46" cy="176" r="16" class="badge-om"/>
+    <text x="46" y="181" font-size="10" font-weight="800" text-anchor="middle" fill="#ffffff">OM</text>
+    <text x="74" y="181" class="title" font-size="13">Orange Money</text>
+
+    <rect x="20" y="214" width="230" height="52" rx="14" fill="#ffffff" stroke="#eee2f7" stroke-width="1.5"/>
+    <circle cx="46" cy="240" r="16" fill="#6366F1"/>
+    <text x="74" y="245" class="title" font-size="13">Card</text>
+  </g>
+
+  <path class="arrow" d="M310 165 H350" marker-end="url(#arrowhead)"/>
+
+  <!-- Screen 2: confirm on phone -->
+  <g transform="translate(360,30)">
+    <text class="step-label" x="0" y="-10">2. CONFIRM ON PHONE</text>
+    <rect class="card" x="0" y="0" width="270" height="270" rx="24"/>
+    <circle cx="135" cy="100" r="48" fill="none" stroke="#5B2A86" stroke-width="1.5" opacity="0.35"/>
+    <circle cx="135" cy="100" r="34" fill="none" stroke="#5B2A86" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="135" cy="100" r="22" fill="#f3edf9"/>
+    <text x="135" y="106" font-size="20" text-anchor="middle">📱</text>
+
+    <text x="135" y="180" text-anchor="middle" class="title">Confirm on your phone</text>
+    <text x="135" y="202" text-anchor="middle" class="muted">Dial the USSD prompt or approve</text>
+    <text x="135" y="218" text-anchor="middle" class="muted">the request to confirm this payment.</text>
+  </g>
+
+  <path class="arrow" d="M640 165 H680" marker-end="url(#arrowhead)"/>
+
+  <!-- Screen 3: success -->
+  <g transform="translate(690,30)">
+    <text class="step-label" x="0" y="-10">3. PAYMENT SUCCESSFUL</text>
+    <rect class="card" x="0" y="0" width="270" height="270" rx="24"/>
+    <circle cx="135" cy="96" r="38" fill="#e9f9ee"/>
+    <path d="M118 97 l13 13 l24 -26" fill="none" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <text x="135" y="164" text-anchor="middle" class="title">Payment successful</text>
+    <text x="135" y="186" text-anchor="middle" class="muted">Your payment was received.</text>
+    <text x="135" y="202" text-anchor="middle" class="muted">Thank you!</text>
+
+    <rect x="45" y="222" width="180" height="34" rx="10" class="brand"/>
+    <text x="135" y="244" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">Done</text>
+  </g>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#c9b8de"/>
+    </marker>
+  </defs>
+</svg>
