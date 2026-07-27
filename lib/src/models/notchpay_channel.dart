@@ -66,37 +66,68 @@ enum NotchPayChannelKind {
   /// Infers a [NotchPayChannelKind] from a NotchPay channel code/slug or name.
   static NotchPayChannelKind fromCode(String code, [String? name]) {
     final normalized = '${code.toLowerCase()} ${name?.toLowerCase() ?? ''}';
-    if (normalized.contains('yoomee')) return NotchPayChannelKind.yoomee;
-    if (normalized.contains('mtn') || normalized.contains('momo'))
+    if (normalized.contains('yoomee')) {
+      return NotchPayChannelKind.yoomee;
+    }
+    if (normalized.contains('mtn') || normalized.contains('momo')) {
       return NotchPayChannelKind.mtn;
-    if (normalized.contains('orange') || RegExp(r'\bom\b').hasMatch(normalized))
+    }
+    if (normalized.contains('orange') ||
+        RegExp(r'\bom\b').hasMatch(normalized)) {
       return NotchPayChannelKind.orange;
-    if (normalized.contains('moov')) return NotchPayChannelKind.moov;
-    if (normalized.contains('wave')) return NotchPayChannelKind.wave;
-    if (normalized.contains('airtel')) return NotchPayChannelKind.airtel;
-    if (normalized.contains('vodafone') || normalized.contains('vodacom'))
+    }
+    if (normalized.contains('moov')) {
+      return NotchPayChannelKind.moov;
+    }
+    if (normalized.contains('wave')) {
+      return NotchPayChannelKind.wave;
+    }
+    if (normalized.contains('airtel')) {
+      return NotchPayChannelKind.airtel;
+    }
+    if (normalized.contains('vodafone') || normalized.contains('vodacom')) {
       return NotchPayChannelKind.vodafone;
-    if (normalized.contains('mpesa') || normalized.contains('m-pesa'))
+    }
+    if (normalized.contains('mpesa') || normalized.contains('m-pesa')) {
       return NotchPayChannelKind.mpesa;
-    if (normalized.contains('free')) return NotchPayChannelKind.free;
+    }
+    if (normalized.contains('free')) {
+      return NotchPayChannelKind.free;
+    }
     if (normalized.contains('express') ||
         normalized.contains('eu') ||
-        normalized.contains('eumm')) return NotchPayChannelKind.eumm;
-    if (normalized.contains('glo')) return NotchPayChannelKind.glo;
-    if (normalized.contains('tigo')) return NotchPayChannelKind.tigo;
-    if (normalized.contains('halopesa') || normalized.contains('halo'))
+        normalized.contains('eumm')) {
+      return NotchPayChannelKind.eumm;
+    }
+    if (normalized.contains('glo')) {
+      return NotchPayChannelKind.glo;
+    }
+    if (normalized.contains('tigo')) {
+      return NotchPayChannelKind.tigo;
+    }
+    if (normalized.contains('halopesa') || normalized.contains('halo')) {
       return NotchPayChannelKind.halopesa;
-    if (normalized.contains('equitel')) return NotchPayChannelKind.equitel;
-    if (normalized.contains('tkash') || normalized.contains('telkom'))
+    }
+    if (normalized.contains('equitel')) {
+      return NotchPayChannelKind.equitel;
+    }
+    if (normalized.contains('tkash') || normalized.contains('telkom')) {
       return NotchPayChannelKind.tkash;
-    if (normalized.contains('green')) return NotchPayChannelKind.green;
+    }
+    if (normalized.contains('green')) {
+      return NotchPayChannelKind.green;
+    }
     if (normalized.contains('card') ||
         normalized.contains('carte') ||
         normalized.contains('visa') ||
         normalized.contains('mastercard')) {
       return NotchPayChannelKind.card;
     }
-    if (normalized.contains('bank') || normalized.contains('ussd')) {
+    if (normalized.contains('bank') ||
+        normalized.contains('banque') ||
+        normalized.contains('transfer') ||
+        normalized.contains('virement') ||
+        normalized.contains('ussd')) {
       return NotchPayChannelKind.bank;
     }
     if (normalized.contains('mobile') || normalized.contains('wallet')) {
