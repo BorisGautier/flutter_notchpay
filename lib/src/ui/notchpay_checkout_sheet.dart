@@ -31,6 +31,18 @@ const _mobileMoneyKinds = {
   NotchPayChannelKind.mtn,
   NotchPayChannelKind.orange,
   NotchPayChannelKind.yoomee,
+  NotchPayChannelKind.moov,
+  NotchPayChannelKind.wave,
+  NotchPayChannelKind.airtel,
+  NotchPayChannelKind.vodafone,
+  NotchPayChannelKind.mpesa,
+  NotchPayChannelKind.free,
+  NotchPayChannelKind.eumm,
+  NotchPayChannelKind.glo,
+  NotchPayChannelKind.tigo,
+  NotchPayChannelKind.halopesa,
+  NotchPayChannelKind.equitel,
+  NotchPayChannelKind.tkash,
   NotchPayChannelKind.mobileMoney,
 };
 

@@ -12,6 +12,42 @@ enum NotchPayChannelKind {
   /// YooMee Money.
   yoomee,
 
+  /// Moov Money.
+  moov,
+
+  /// Wave Mobile Money.
+  wave,
+
+  /// Airtel Money / AirtelTigo.
+  airtel,
+
+  /// Vodafone / Vodacom.
+  vodafone,
+
+  /// Safaricom M-Pesa.
+  mpesa,
+
+  /// Free Mobile Money Senegal.
+  free,
+
+  /// Express Union / EU Mobile.
+  eumm,
+
+  /// Glo Mobile.
+  glo,
+
+  /// Tigo Pesa.
+  tigo,
+
+  /// HaloPesa.
+  halopesa,
+
+  /// Equitel.
+  equitel,
+
+  /// Telkom Tkash.
+  tkash,
+
   /// Generic mobile money channel (operator picked automatically).
   mobileMoney,
 
@@ -27,15 +63,21 @@ enum NotchPayChannelKind {
   /// Infers a [NotchPayChannelKind] from a NotchPay channel code/slug or name.
   static NotchPayChannelKind fromCode(String code, [String? name]) {
     final normalized = '${code.toLowerCase()} ${name?.toLowerCase() ?? ''}';
-    if (normalized.contains('mtn') || normalized.contains('momo')) {
-      return NotchPayChannelKind.mtn;
-    }
-    if (normalized.contains('yoomee')) {
-      return NotchPayChannelKind.yoomee;
-    }
-    if (normalized.contains('orange') || RegExp(r'\bom\b').hasMatch(normalized)) {
-      return NotchPayChannelKind.orange;
-    }
+    if (normalized.contains('yoomee')) return NotchPayChannelKind.yoomee;
+    if (normalized.contains('mtn') || normalized.contains('momo')) return NotchPayChannelKind.mtn;
+    if (normalized.contains('orange') || RegExp(r'\bom\b').hasMatch(normalized)) return NotchPayChannelKind.orange;
+    if (normalized.contains('moov')) return NotchPayChannelKind.moov;
+    if (normalized.contains('wave')) return NotchPayChannelKind.wave;
+    if (normalized.contains('airtel')) return NotchPayChannelKind.airtel;
+    if (normalized.contains('vodafone') || normalized.contains('vodacom')) return NotchPayChannelKind.vodafone;
+    if (normalized.contains('mpesa') || normalized.contains('m-pesa')) return NotchPayChannelKind.mpesa;
+    if (normalized.contains('free')) return NotchPayChannelKind.free;
+    if (normalized.contains('express') || normalized.contains('eu') || normalized.contains('eumm')) return NotchPayChannelKind.eumm;
+    if (normalized.contains('glo')) return NotchPayChannelKind.glo;
+    if (normalized.contains('tigo')) return NotchPayChannelKind.tigo;
+    if (normalized.contains('halopesa') || normalized.contains('halo')) return NotchPayChannelKind.halopesa;
+    if (normalized.contains('equitel')) return NotchPayChannelKind.equitel;
+    if (normalized.contains('tkash') || normalized.contains('telkom')) return NotchPayChannelKind.tkash;
     if (normalized.contains('card') ||
         normalized.contains('carte') ||
         normalized.contains('visa') ||

@@ -33,6 +33,13 @@ flutter:
     - assets/momo.jpg
     - assets/om.png
     - assets/yoomee.png
+    - assets/moov.png
+    - assets/airtel.png
+    - assets/vodafone.png
+    - assets/mpesa.png
+    - assets/free.png
+    - assets/glo.png
+    - assets/tigo.png
 
 topics:
   - payments
