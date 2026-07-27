@@ -59,7 +59,7 @@ class NotchPayLocalizations {
     done: 'Done',
     close: 'Close',
     retry: 'Try again',
-    sandboxModeBanner: 'Sandbox mode — no real money will move',
+    sandboxModeBanner: 'Sandbox mode no real money will move',
   );
 
   /// French strings.
@@ -84,7 +84,7 @@ class NotchPayLocalizations {
     done: 'Terminé',
     close: 'Fermer',
     retry: 'Réessayer',
-    sandboxModeBanner: 'Mode bac à sable — aucun argent réel ne sera déplacé',
+    sandboxModeBanner: 'Mode Test aucun argent réel ne sera déplacé',
   );
 
   static const Map<String, NotchPayLocalizations> _supported = {

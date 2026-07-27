@@ -14,7 +14,8 @@ void main() {
   NotchPay.init(
     publicKey: const String.fromEnvironment(
       'NOTCHPAY_PUBLIC_KEY',
-      defaultValue: 'pk_test_replace_with_your_public_key',
+      defaultValue:
+          'pk_test.VbnmyXvKpw4mmE4fBvIsFHfgrZ03D3HZMbxWCaRqjuQZs6anRXmlyRMrpVKeD3gK1DGaa6urjQDvMvEbxG4Isr6MQMvGjxdJBDSdBRRTVv68Yb5uNvKN310XaP17d',
     ),
   );
   runApp(const NotchPayExampleApp());

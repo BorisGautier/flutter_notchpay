@@ -118,21 +118,39 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
 
   Future<void> _initialize() async {
     try {
-      final payment = await widget.paymentService.initialize(widget.request);
       final channels =
           await widget.resourceService.channels(country: widget.countryCode);
-      if (!mounted) return;
-      setState(() {
-        _payment = payment;
-        _channels = channels;
-        _step = _Step.selectChannel;
-      });
+      if (mounted) {
+        setState(() {
+          _channels = channels;
+          _step = _Step.selectChannel;
+        });
+      }
+
+      final payment = await widget.paymentService.initialize(widget.request);
+      if (mounted) {
+        setState(() {
+          _payment = payment;
+        });
+      }
     } on NotchPayException catch (error) {
       if (!mounted) return;
-      setState(() {
-        _failureMessage = error.message;
-        _step = _Step.result;
-      });
+      if (_channels.isNotEmpty) {
+        // If channels were already loaded, stay on selectChannel and log failure on submission
+      } else {
+        setState(() {
+          _failureMessage = error.message;
+          _step = _Step.result;
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      if (_channels.isEmpty) {
+        setState(() {
+          _failureMessage = error.toString();
+          _step = _Step.result;
+        });
+      }
     }
   }
 
@@ -296,7 +314,11 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                       'assets/logo.png',
                       package: 'flutter_notchpay',
                       height: 28,
-                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        'assets/logo.png',
+                        height: 28,
+                        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -339,12 +361,16 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                       'assets/logo.png',
                       package: 'flutter_notchpay',
                       height: 14,
-                      errorBuilder: (_, __, ___) => Text(
-                        'NotchPay',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: theme.mutedColor,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        'assets/logo.png',
+                        height: 14,
+                        errorBuilder: (_, __, ___) => Text(
+                          'NotchPay',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.mutedColor,
+                          ),
                         ),
                       ),
                     ),

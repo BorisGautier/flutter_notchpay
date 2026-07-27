@@ -33,7 +33,7 @@ class HistoryPage extends StatelessWidget {
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: records.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
+            separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final record = records[index];
               return ListTile(

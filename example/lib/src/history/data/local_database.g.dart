@@ -9,136 +9,88 @@ class $PaymentRecordsTable extends PaymentRecords
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $PaymentRecordsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _referenceMeta = const VerificationMeta(
-    'reference',
-  );
+  static const VerificationMeta _referenceMeta =
+      const VerificationMeta('reference');
   @override
   late final GeneratedColumn<String> reference = GeneratedColumn<String>(
-    'reference',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+      'reference', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _amountMeta = const VerificationMeta('amount');
   @override
   late final GeneratedColumn<double> amount = GeneratedColumn<double>(
-    'amount',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _currencyMeta = const VerificationMeta(
-    'currency',
-  );
+      'amount', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _currencyMeta =
+      const VerificationMeta('currency');
   @override
   late final GeneratedColumn<String> currency = GeneratedColumn<String>(
-    'currency',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+      'currency', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _descriptionMeta = const VerificationMeta(
-    'description',
-  );
+      'status', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
-    'description',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
+      'description', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
-  );
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
-  List<GeneratedColumn> get $columns => [
-    reference,
-    amount,
-    currency,
-    status,
-    description,
-    createdAt,
-  ];
+  List<GeneratedColumn> get $columns =>
+      [reference, amount, currency, status, description, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'payment_records';
   @override
-  VerificationContext validateIntegrity(
-    Insertable<PaymentRecord> instance, {
-    bool isInserting = false,
-  }) {
+  VerificationContext validateIntegrity(Insertable<PaymentRecord> instance,
+      {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('reference')) {
-      context.handle(
-        _referenceMeta,
-        reference.isAcceptableOrUnknown(data['reference']!, _referenceMeta),
-      );
+      context.handle(_referenceMeta,
+          reference.isAcceptableOrUnknown(data['reference']!, _referenceMeta));
     } else if (isInserting) {
       context.missing(_referenceMeta);
     }
     if (data.containsKey('amount')) {
-      context.handle(
-        _amountMeta,
-        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
-      );
+      context.handle(_amountMeta,
+          amount.isAcceptableOrUnknown(data['amount']!, _amountMeta));
     } else if (isInserting) {
       context.missing(_amountMeta);
     }
     if (data.containsKey('currency')) {
-      context.handle(
-        _currencyMeta,
-        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
-      );
+      context.handle(_currencyMeta,
+          currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta));
     } else if (isInserting) {
       context.missing(_currencyMeta);
     }
     if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
     } else if (isInserting) {
       context.missing(_statusMeta);
     }
     if (data.containsKey('description')) {
       context.handle(
-        _descriptionMeta,
-        description.isAcceptableOrUnknown(
-          data['description']!,
           _descriptionMeta,
-        ),
-      );
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
     }
     if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     return context;
   }
@@ -149,30 +101,18 @@ class $PaymentRecordsTable extends PaymentRecords
   PaymentRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PaymentRecord(
-      reference: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}reference'],
-      )!,
-      amount: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}amount'],
-      )!,
-      currency: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}currency'],
-      )!,
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      description: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}description'],
-      ),
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
+      reference: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}reference'])!,
+      amount: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
+      currency: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}currency'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
     );
   }
 
@@ -200,14 +140,13 @@ class PaymentRecord extends DataClass implements Insertable<PaymentRecord> {
 
   /// When this record was saved on the device.
   final DateTime createdAt;
-  const PaymentRecord({
-    required this.reference,
-    required this.amount,
-    required this.currency,
-    required this.status,
-    this.description,
-    required this.createdAt,
-  });
+  const PaymentRecord(
+      {required this.reference,
+      required this.amount,
+      required this.currency,
+      required this.status,
+      this.description,
+      required this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -235,10 +174,8 @@ class PaymentRecord extends DataClass implements Insertable<PaymentRecord> {
     );
   }
 
-  factory PaymentRecord.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory PaymentRecord.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PaymentRecord(
       reference: serializer.fromJson<String>(json['reference']),
@@ -262,30 +199,29 @@ class PaymentRecord extends DataClass implements Insertable<PaymentRecord> {
     };
   }
 
-  PaymentRecord copyWith({
-    String? reference,
-    double? amount,
-    String? currency,
-    String? status,
-    Value<String?> description = const Value.absent(),
-    DateTime? createdAt,
-  }) => PaymentRecord(
-    reference: reference ?? this.reference,
-    amount: amount ?? this.amount,
-    currency: currency ?? this.currency,
-    status: status ?? this.status,
-    description: description.present ? description.value : this.description,
-    createdAt: createdAt ?? this.createdAt,
-  );
+  PaymentRecord copyWith(
+          {String? reference,
+          double? amount,
+          String? currency,
+          String? status,
+          Value<String?> description = const Value.absent(),
+          DateTime? createdAt}) =>
+      PaymentRecord(
+        reference: reference ?? this.reference,
+        amount: amount ?? this.amount,
+        currency: currency ?? this.currency,
+        status: status ?? this.status,
+        description: description.present ? description.value : this.description,
+        createdAt: createdAt ?? this.createdAt,
+      );
   PaymentRecord copyWithCompanion(PaymentRecordsCompanion data) {
     return PaymentRecord(
       reference: data.reference.present ? data.reference.value : this.reference,
       amount: data.amount.present ? data.amount.value : this.amount,
       currency: data.currency.present ? data.currency.value : this.currency,
       status: data.status.present ? data.status.value : this.status,
-      description: data.description.present
-          ? data.description.value
-          : this.description,
+      description:
+          data.description.present ? data.description.value : this.description,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -343,10 +279,10 @@ class PaymentRecordsCompanion extends UpdateCompanion<PaymentRecord> {
     this.description = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : reference = Value(reference),
-       amount = Value(amount),
-       currency = Value(currency),
-       status = Value(status);
+  })  : reference = Value(reference),
+        amount = Value(amount),
+        currency = Value(currency),
+        status = Value(status);
   static Insertable<PaymentRecord> custom({
     Expression<String>? reference,
     Expression<double>? amount,
@@ -367,15 +303,14 @@ class PaymentRecordsCompanion extends UpdateCompanion<PaymentRecord> {
     });
   }
 
-  PaymentRecordsCompanion copyWith({
-    Value<String>? reference,
-    Value<double>? amount,
-    Value<String>? currency,
-    Value<String>? status,
-    Value<String?>? description,
-    Value<DateTime>? createdAt,
-    Value<int>? rowid,
-  }) {
+  PaymentRecordsCompanion copyWith(
+      {Value<String>? reference,
+      Value<double>? amount,
+      Value<String>? currency,
+      Value<String>? status,
+      Value<String?>? description,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
     return PaymentRecordsCompanion(
       reference: reference ?? this.reference,
       amount: amount ?? this.amount,
@@ -440,26 +375,26 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [paymentRecords];
 }
 
-typedef $$PaymentRecordsTableCreateCompanionBuilder =
-    PaymentRecordsCompanion Function({
-      required String reference,
-      required double amount,
-      required String currency,
-      required String status,
-      Value<String?> description,
-      Value<DateTime> createdAt,
-      Value<int> rowid,
-    });
-typedef $$PaymentRecordsTableUpdateCompanionBuilder =
-    PaymentRecordsCompanion Function({
-      Value<String> reference,
-      Value<double> amount,
-      Value<String> currency,
-      Value<String> status,
-      Value<String?> description,
-      Value<DateTime> createdAt,
-      Value<int> rowid,
-    });
+typedef $$PaymentRecordsTableCreateCompanionBuilder = PaymentRecordsCompanion
+    Function({
+  required String reference,
+  required double amount,
+  required String currency,
+  required String status,
+  Value<String?> description,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+typedef $$PaymentRecordsTableUpdateCompanionBuilder = PaymentRecordsCompanion
+    Function({
+  Value<String> reference,
+  Value<double> amount,
+  Value<String> currency,
+  Value<String> status,
+  Value<String?> description,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
 
 class $$PaymentRecordsTableFilterComposer
     extends Composer<_$LocalDatabase, $PaymentRecordsTable> {
@@ -471,34 +406,22 @@ class $$PaymentRecordsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<String> get reference => $composableBuilder(
-    column: $table.reference,
-    builder: (column) => ColumnFilters(column),
-  );
+      column: $table.reference, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get amount => $composableBuilder(
-    column: $table.amount,
-    builder: (column) => ColumnFilters(column),
-  );
+      column: $table.amount, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get currency => $composableBuilder(
-    column: $table.currency,
-    builder: (column) => ColumnFilters(column),
-  );
+      column: $table.currency, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
+      column: $table.status, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get description => $composableBuilder(
-    column: $table.description,
-    builder: (column) => ColumnFilters(column),
-  );
+      column: $table.description, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$PaymentRecordsTableOrderingComposer
@@ -511,34 +434,22 @@ class $$PaymentRecordsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<String> get reference => $composableBuilder(
-    column: $table.reference,
-    builder: (column) => ColumnOrderings(column),
-  );
+      column: $table.reference, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get amount => $composableBuilder(
-    column: $table.amount,
-    builder: (column) => ColumnOrderings(column),
-  );
+      column: $table.amount, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get currency => $composableBuilder(
-    column: $table.currency,
-    builder: (column) => ColumnOrderings(column),
-  );
+      column: $table.currency, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
+      column: $table.status, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get description => $composableBuilder(
-    column: $table.description,
-    builder: (column) => ColumnOrderings(column),
-  );
+      column: $table.description, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$PaymentRecordsTableAnnotationComposer
@@ -563,41 +474,30 @@ class $$PaymentRecordsTableAnnotationComposer
       $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
-    column: $table.description,
-    builder: (column) => column,
-  );
+      column: $table.description, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
-class $$PaymentRecordsTableTableManager
-    extends
-        RootTableManager<
-          _$LocalDatabase,
-          $PaymentRecordsTable,
-          PaymentRecord,
-          $$PaymentRecordsTableFilterComposer,
-          $$PaymentRecordsTableOrderingComposer,
-          $$PaymentRecordsTableAnnotationComposer,
-          $$PaymentRecordsTableCreateCompanionBuilder,
-          $$PaymentRecordsTableUpdateCompanionBuilder,
-          (
-            PaymentRecord,
-            BaseReferences<
-              _$LocalDatabase,
-              $PaymentRecordsTable,
-              PaymentRecord
-            >,
-          ),
-          PaymentRecord,
-          PrefetchHooks Function()
-        > {
+class $$PaymentRecordsTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $PaymentRecordsTable,
+    PaymentRecord,
+    $$PaymentRecordsTableFilterComposer,
+    $$PaymentRecordsTableOrderingComposer,
+    $$PaymentRecordsTableAnnotationComposer,
+    $$PaymentRecordsTableCreateCompanionBuilder,
+    $$PaymentRecordsTableUpdateCompanionBuilder,
+    (
+      PaymentRecord,
+      BaseReferences<_$LocalDatabase, $PaymentRecordsTable, PaymentRecord>
+    ),
+    PaymentRecord,
+    PrefetchHooks Function()> {
   $$PaymentRecordsTableTableManager(
-    _$LocalDatabase db,
-    $PaymentRecordsTable table,
-  ) : super(
-        TableManagerState(
+      _$LocalDatabase db, $PaymentRecordsTable table)
+      : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -606,67 +506,64 @@ class $$PaymentRecordsTableTableManager
               $$PaymentRecordsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$PaymentRecordsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> reference = const Value.absent(),
-                Value<double> amount = const Value.absent(),
-                Value<String> currency = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> description = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => PaymentRecordsCompanion(
-                reference: reference,
-                amount: amount,
-                currency: currency,
-                status: status,
-                description: description,
-                createdAt: createdAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String reference,
-                required double amount,
-                required String currency,
-                required String status,
-                Value<String?> description = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => PaymentRecordsCompanion.insert(
-                reference: reference,
-                amount: amount,
-                currency: currency,
-                status: status,
-                description: description,
-                createdAt: createdAt,
-                rowid: rowid,
-              ),
+          updateCompanionCallback: ({
+            Value<String> reference = const Value.absent(),
+            Value<double> amount = const Value.absent(),
+            Value<String> currency = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PaymentRecordsCompanion(
+            reference: reference,
+            amount: amount,
+            currency: currency,
+            status: status,
+            description: description,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String reference,
+            required double amount,
+            required String currency,
+            required String status,
+            Value<String?> description = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PaymentRecordsCompanion.insert(
+            reference: reference,
+            amount: amount,
+            currency: currency,
+            status: status,
+            description: description,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ),
-      );
+        ));
 }
 
-typedef $$PaymentRecordsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$LocalDatabase,
-      $PaymentRecordsTable,
+typedef $$PaymentRecordsTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $PaymentRecordsTable,
+    PaymentRecord,
+    $$PaymentRecordsTableFilterComposer,
+    $$PaymentRecordsTableOrderingComposer,
+    $$PaymentRecordsTableAnnotationComposer,
+    $$PaymentRecordsTableCreateCompanionBuilder,
+    $$PaymentRecordsTableUpdateCompanionBuilder,
+    (
       PaymentRecord,
-      $$PaymentRecordsTableFilterComposer,
-      $$PaymentRecordsTableOrderingComposer,
-      $$PaymentRecordsTableAnnotationComposer,
-      $$PaymentRecordsTableCreateCompanionBuilder,
-      $$PaymentRecordsTableUpdateCompanionBuilder,
-      (
-        PaymentRecord,
-        BaseReferences<_$LocalDatabase, $PaymentRecordsTable, PaymentRecord>,
-      ),
-      PaymentRecord,
-      PrefetchHooks Function()
-    >;
+      BaseReferences<_$LocalDatabase, $PaymentRecordsTable, PaymentRecord>
+    ),
+    PaymentRecord,
+    PrefetchHooks Function()>;
 
 class $LocalDatabaseManager {
   final _$LocalDatabase _db;

@@ -4,22 +4,22 @@ import 'package:flutter_notchpay/src/ui/widgets/notchpay_channel_badge.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('renders the MTN label', (tester) async {
+  testWidgets('renders the MTN logo', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: NotchPayChannelBadge(kind: NotchPayChannelKind.mtn),
       ),
     );
-    expect(find.text('MTN'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
   });
 
-  testWidgets('renders the Orange Money label', (tester) async {
+  testWidgets('renders the Orange Money logo', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: NotchPayChannelBadge(kind: NotchPayChannelKind.orange),
       ),
     );
-    expect(find.text('OM'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
   });
 
   testWidgets('renders a card icon for the card channel', (tester) async {

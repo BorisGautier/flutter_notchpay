@@ -30,6 +30,9 @@ flutter:
   assets:
     - assets/logo.png
     - assets/logo-banner.png
+    - assets/momo.jpg
+    - assets/om.png
+    - assets/yoomee.png
 
 topics:
   - payments

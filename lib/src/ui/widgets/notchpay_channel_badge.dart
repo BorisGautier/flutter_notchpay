@@ -21,6 +21,42 @@ class NotchPayChannelBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final assetPath = switch (kind) {
+      NotchPayChannelKind.mtn => 'assets/momo.jpg',
+      NotchPayChannelKind.orange => 'assets/om.png',
+      NotchPayChannelKind.yoomee => 'assets/yoomee.png',
+      _ => null,
+    };
+
+    final fallback = _buildFallback(context);
+
+    if (assetPath == null) return fallback;
+
+    return Container(
+      width: size,
+      height: size,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.3),
+      ),
+      child: Image.asset(
+        assetPath,
+        package: 'flutter_notchpay',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Image.asset(
+          assetPath,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => fallback,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallback(BuildContext context) {
     final style = _styleFor(kind);
     return Container(
       width: size,
@@ -55,6 +91,11 @@ class NotchPayChannelBadge extends StatelessWidget {
           background: Color(0xFFFF6600),
           foreground: Colors.white,
           label: 'OM',
+        ),
+      NotchPayChannelKind.yoomee => const _BadgeStyle(
+          background: Color(0xFFE20074),
+          foreground: Colors.white,
+          label: 'YM',
         ),
       NotchPayChannelKind.mobileMoney => const _BadgeStyle(
           background: Color(0xFF0EA5E9),

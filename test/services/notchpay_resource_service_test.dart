@@ -29,7 +29,7 @@ void main() {
 
       final channels = await service.channels(country: 'cm');
 
-      expect(capturedUri.queryParameters['country'], 'cm');
+      expect(capturedUri.queryParameters['country'], 'CM');
       expect(channels, hasLength(2));
       expect(channels.first.kind, NotchPayChannelKind.mtn);
     });
