@@ -1,5 +1,9 @@
 # flutter_notchpay
 
+<p align="center">
+  <img src="assets/logo-banner.png" width="600" alt="NotchPay Banner" />
+</p>
+
 [![CI](https://github.com/BorisGautier/flutter_notchpay/actions/workflows/ci.yml/badge.svg)](https://github.com/BorisGautier/flutter_notchpay/actions/workflows/ci.yml)
 [![pub package](https://img.shields.io/pub/v/flutter_notchpay.svg)](https://pub.dev/packages/flutter_notchpay)
 [![codecov](https://codecov.io/gh/BorisGautier/flutter_notchpay/branch/main/graph/badge.svg)](https://codecov.io/gh/BorisGautier/flutter_notchpay)

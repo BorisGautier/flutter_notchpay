@@ -90,8 +90,16 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      - name: Install dependencies
+      - name: Install package dependencies
         run: flutter pub get
+
+      - name: Install example dependencies
+        working-directory: example
+        run: flutter pub get
+
+      - name: Generate example code
+        working-directory: example
+        run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Enable KVM
         run: |
@@ -105,7 +113,7 @@ jobs:
           api-level: 34
           arch: x86_64
           profile: pixel_6
-          script: flutter test integration_test
+          script: cd example && flutter test ../integration_test
 
   secret-scan:
     name: Secret scan

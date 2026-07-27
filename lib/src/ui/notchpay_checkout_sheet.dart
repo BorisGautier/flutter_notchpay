@@ -292,6 +292,13 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                 ],
                 Row(
                   children: [
+                    Image.asset(
+                      'assets/logo.png',
+                      package: 'flutter_notchpay',
+                      height: 28,
+                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         NotchPayCurrencyFormatter.format(
@@ -316,6 +323,32 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                 AnimatedSize(
                   duration: const Duration(milliseconds: 220),
                   child: _buildStep(theme, l10n),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.lock_outline_rounded,
+                        size: 12, color: theme.mutedColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Secured by ',
+                      style: TextStyle(fontSize: 11, color: theme.mutedColor),
+                    ),
+                    Image.asset(
+                      'assets/logo.png',
+                      package: 'flutter_notchpay',
+                      height: 14,
+                      errorBuilder: (_, __, ___) => Text(
+                        'NotchPay',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: theme.mutedColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

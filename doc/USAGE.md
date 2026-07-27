@@ -432,7 +432,7 @@ key throws `NotchPayConfigurationException` immediately, by design.
 final recipient = await backend.recipients.create(
   const NotchPayRecipient(
     reference: '', // ignored on create
-    name: 'Chapdel Kamga',
+    name: 'Boris Gautier',
     country: 'CM',
     currency: 'XAF',
     channel: 'cm.mobile',
@@ -455,7 +455,7 @@ final transfer = await backend.transfers.initiate(
   recipient: {
     'account_number': '+237651608133',
     'country': 'CM',
-    'name': 'Chapdel Kamga',
+    'name': 'Boris Gautier',
   },
   description: 'Payout',
 );

@@ -6,8 +6,8 @@ void main() {
     test('parses a full API payload', () {
       final customer = NotchPayCustomer.fromJson({
         'reference': 'cus.xxLZjWte8fdc8YNY',
-        'name': 'Chapdel KAMGA',
-        'email': 'd512@schapdel5.me',
+        'name': 'Boris Gautier',
+        'email': 'boris@gautier.me',
         'phone': '+237655728267',
         'description': 'My first customer',
         'locked': false,
@@ -20,8 +20,8 @@ void main() {
       });
 
       expect(customer.reference, 'cus.xxLZjWte8fdc8YNY');
-      expect(customer.name, 'Chapdel KAMGA');
-      expect(customer.email, 'd512@schapdel5.me');
+      expect(customer.name, 'Boris Gautier');
+      expect(customer.email, 'boris@gautier.me');
       expect(customer.address?.city, 'Douala');
       expect(customer.locked, isFalse);
       expect(customer.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
