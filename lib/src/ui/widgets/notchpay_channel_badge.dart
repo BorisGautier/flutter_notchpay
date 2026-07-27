@@ -164,6 +164,11 @@ class NotchPayChannelBadge extends StatelessWidget {
           foreground: Colors.white,
           label: 'TKASH',
         ),
+      NotchPayChannelKind.green => const _BadgeStyle(
+          background: Color(0xFF10B981),
+          foreground: Colors.white,
+          label: 'GREEN',
+        ),
       NotchPayChannelKind.mobileMoney => const _BadgeStyle(
           background: Color(0xFF0EA5E9),
           foreground: Colors.white,

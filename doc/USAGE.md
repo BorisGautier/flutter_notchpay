@@ -142,6 +142,14 @@ shows no banner at all, keeping the paid UI clean.
 
 ## 5. The checkout flow
 
+<p align="center">
+  <img src="screenshots/1.png" width="220" alt="Select Payment Channel" />
+  &nbsp;&nbsp;
+  <img src="screenshots/2.png" width="220" alt="Mobile Money Form" />
+  &nbsp;&nbsp;
+  <img src="screenshots/3.png" width="220" alt="Processing Payment" />
+</p>
+
 ```dart
 final result = await NotchPay.instance.checkout(
   context,

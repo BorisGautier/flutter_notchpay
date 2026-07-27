@@ -51,7 +51,8 @@ class LocalDatabase extends _$LocalDatabase {
   Stream<List<PaymentRecord>> watchHistory() {
     return (select(
       paymentRecords,
-    )..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).watch();
+    )..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+        .watch();
   }
 }
 

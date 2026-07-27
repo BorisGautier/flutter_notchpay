@@ -93,6 +93,29 @@ class NotchPayPhoneUtils {
     return digits;
   }
 
+  /// Detects the ISO 3166-1 alpha-2 country code (e.g. 'CM', 'CI', 'NG')
+  /// from an international phone number string.
+  static String? detectCountryCode(String phone) {
+    final cleaned = phone.replaceAll(RegExp(r'[^0-9+]'), '');
+    if (cleaned.startsWith('+237') || cleaned.startsWith('237')) return 'CM';
+    if (cleaned.startsWith('+225') || cleaned.startsWith('225')) return 'CI';
+    if (cleaned.startsWith('+234') || cleaned.startsWith('234')) return 'NG';
+    if (cleaned.startsWith('+221') || cleaned.startsWith('221')) return 'SN';
+    if (cleaned.startsWith('+241') || cleaned.startsWith('241')) return 'GA';
+    if (cleaned.startsWith('+229') || cleaned.startsWith('229')) return 'BJ';
+    if (cleaned.startsWith('+226') || cleaned.startsWith('226')) return 'BF';
+    if (cleaned.startsWith('+256') || cleaned.startsWith('256')) return 'UG';
+    if (cleaned.startsWith('+250') || cleaned.startsWith('250')) return 'RW';
+    if (cleaned.startsWith('+243') || cleaned.startsWith('243')) return 'CD';
+    if (cleaned.startsWith('+255') || cleaned.startsWith('255')) return 'TZ';
+    if (cleaned.startsWith('+254') || cleaned.startsWith('254')) return 'KE';
+    if (cleaned.startsWith('+233') || cleaned.startsWith('233')) return 'GH';
+    if (cleaned.startsWith('+235') || cleaned.startsWith('235')) return 'TD';
+    if (cleaned.startsWith('+236') || cleaned.startsWith('236')) return 'CF';
+    if (cleaned.startsWith('+242') || cleaned.startsWith('242')) return 'CG';
+    return null;
+  }
+
   /// Detects the operator kind by inspecting international or local prefixes.
   static NotchPayChannelKind detectOperator(String phone) {
     final cleaned = phone.replaceAll(RegExp(r'[^0-9+]'), '');
@@ -153,5 +176,99 @@ class NotchPayPhoneUtils {
     if (digits.startsWith('237')) digits = digits.substring(3);
     if (digits.startsWith('0')) digits = digits.substring(1);
     return RegExp(r'^[6][0-9]{8}$').hasMatch(digits);
+  }
+
+  /// Returns the expected phone number format hint for a given operator [kind]
+  /// and [countryCode] (e.g. `+237 670 000 000` or `+225 050 000 0000`).
+  static String getPhoneHint(NotchPayChannelKind kind, {String? countryCode}) {
+    final country = countryCode?.toLowerCase() ?? 'cm';
+    switch (country) {
+      case 'ci':
+        return switch (kind) {
+          NotchPayChannelKind.mtn => '+225 050 000 0000',
+          NotchPayChannelKind.orange => '+225 070 000 0000',
+          NotchPayChannelKind.moov => '+225 010 000 0000',
+          NotchPayChannelKind.wave => '+225 030 000 0000',
+          NotchPayChannelKind.green => '+225 090 000 0000',
+          _ => '+225 050 000 0000',
+        };
+      case 'ng':
+        return switch (kind) {
+          NotchPayChannelKind.orange => '+234 700 000 0000',
+          _ => '+234 800 000 0000',
+        };
+      case 'sn':
+        return switch (kind) {
+          NotchPayChannelKind.free => '+221 76 000 00 00',
+          _ => '+221 77 000 00 00',
+        };
+      case 'ga':
+        return switch (kind) {
+          NotchPayChannelKind.eumm => '+241 11 00 00 00',
+          _ => '+241 07 00 00 00',
+        };
+      case 'bj':
+        return switch (kind) {
+          NotchPayChannelKind.moov => '+229 91 00 00 00',
+          NotchPayChannelKind.glo => '+229 97 00 00 00',
+          _ => '+229 90 00 00 00',
+        };
+      case 'bf':
+        return switch (kind) {
+          NotchPayChannelKind.moov => '+226 71 00 00 00',
+          _ => '+226 70 00 00 00',
+        };
+      case 'ug':
+        return switch (kind) {
+          NotchPayChannelKind.airtel => '+256 750 000 000',
+          _ => '+256 770 000 000',
+        };
+      case 'rw':
+        return switch (kind) {
+          NotchPayChannelKind.airtel => '+250 730 000 000',
+          _ => '+250 780 000 000',
+        };
+      case 'cd':
+        return switch (kind) {
+          NotchPayChannelKind.orange => '+243 890 000 000',
+          NotchPayChannelKind.vodafone => '+243 810 000 000',
+          NotchPayChannelKind.eumm => '+243 820 000 000',
+          _ => '+243 990 000 000',
+        };
+      case 'tz':
+        return switch (kind) {
+          NotchPayChannelKind.tigo => '+255 650 000 000',
+          NotchPayChannelKind.vodafone => '+255 740 000 000',
+          NotchPayChannelKind.halopesa => '+255 620 000 000',
+          _ => '+255 670 000 000',
+        };
+      case 'ke':
+        return switch (kind) {
+          NotchPayChannelKind.airtel => '+254 730 000 000',
+          NotchPayChannelKind.equitel => '+254 760 000 000',
+          NotchPayChannelKind.tkash => '+254 770 000 000',
+          _ => '+254 700 000 000',
+        };
+      case 'gh':
+        return switch (kind) {
+          NotchPayChannelKind.vodafone => '+233 20 000 0000',
+          NotchPayChannelKind.airtel => '+233 26 000 0000',
+          _ => '+233 24 000 0000',
+        };
+      case 'td':
+        return '+235 66 00 00 00';
+      case 'cf':
+        return '+236 70 00 00 00';
+      case 'cg':
+        return '+242 05 00 00 00';
+      case 'cm':
+      default:
+        return switch (kind) {
+          NotchPayChannelKind.orange => '+237 690 000 000',
+          NotchPayChannelKind.yoomee => '+237 660 000 000',
+          NotchPayChannelKind.eumm => '+237 680 000 000',
+          _ => '+237 670 000 000',
+        };
+    }
   }
 }

@@ -17,6 +17,11 @@ class NotchPayLocalizations {
   /// that a custom translation can never leave a string blank.
   const NotchPayLocalizations({
     required this.payNow,
+    required this.emailAddress,
+    required this.emailHint,
+    required this.enterEmailAddress,
+    required this.enterValidEmailAddress,
+    required this.continueToPayment,
     required this.mobileMoneyNumber,
     required this.phoneHint,
     required this.enterPhoneNumber,
@@ -46,6 +51,11 @@ class NotchPayLocalizations {
   /// English strings (default / fallback).
   static const NotchPayLocalizations en = NotchPayLocalizations(
     payNow: 'Pay now',
+    emailAddress: 'Email address',
+    emailHint: 'name@example.com',
+    enterEmailAddress: 'Enter your email address',
+    enterValidEmailAddress: 'Enter a valid email address',
+    continueToPayment: 'Continue to payment',
     mobileMoneyNumber: 'Mobile money number',
     phoneHint: '6XX XXX XXX',
     enterPhoneNumber: 'Enter your phone number',
@@ -80,6 +90,11 @@ class NotchPayLocalizations {
   /// French strings.
   static const NotchPayLocalizations fr = NotchPayLocalizations(
     payNow: 'Payer maintenant',
+    emailAddress: 'Adresse e-mail',
+    emailHint: 'nom@exemple.com',
+    enterEmailAddress: 'Entrez votre adresse e-mail',
+    enterValidEmailAddress: 'Entrez une adresse e-mail valide',
+    continueToPayment: 'Continuer vers le paiement',
     mobileMoneyNumber: 'Numéro mobile money',
     phoneHint: '6XX XXX XXX',
     enterPhoneNumber: 'Entrez votre numéro de téléphone',
@@ -103,7 +118,8 @@ class NotchPayLocalizations {
     paymentCancelledTitle: 'Paiement annulé',
     paymentCancelledMessage: 'Le paiement a été annulé.',
     paymentExpiredTitle: 'Paiement expiré',
-    paymentExpiredMessage: 'La demande de paiement a expiré. Veuillez réessayer.',
+    paymentExpiredMessage:
+        'La demande de paiement a expiré. Veuillez réessayer.',
     genericErrorMessage: 'Une erreur est survenue. Veuillez réessayer.',
     done: 'Terminé',
     close: 'Fermer',
@@ -118,6 +134,21 @@ class NotchPayLocalizations {
 
   /// Label of the main call-to-action button, e.g. `Pay now`.
   final String payNow;
+
+  /// Label above the Email input field.
+  final String emailAddress;
+
+  /// Placeholder text shown inside the empty email field.
+  final String emailHint;
+
+  /// Validation error shown when the email field is left empty.
+  final String enterEmailAddress;
+
+  /// Validation error shown when the email is not valid.
+  final String enterValidEmailAddress;
+
+  /// Label on the button to proceed after entering email.
+  final String continueToPayment;
 
   /// Label above the Mobile Money phone field.
   final String mobileMoneyNumber;
@@ -139,9 +170,13 @@ class NotchPayLocalizations {
   /// payments.
   final String mobileMoneyInstructions;
 
-  /// Operator-specific USSD instructions.
+  /// MTN USSD instructions.
   final String mtnInstructions;
+
+  /// Orange USSD instructions.
   final String orangeInstructions;
+
+  /// YooMee USSD instructions.
   final String yoomeeInstructions;
 
   /// Instructions shown under [confirmOnYourPhone] for channels completed

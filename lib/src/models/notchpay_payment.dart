@@ -99,10 +99,8 @@ class NotchPayPayment {
   /// A human-readable message or reason returned by the API for this payment,
   /// if present.
   String? get message {
-    final rawMsg = raw['message'] ??
-        raw['reason'] ??
-        raw['status_reason'] ??
-        raw['error'];
+    final rawMsg =
+        raw['message'] ?? raw['reason'] ?? raw['status_reason'] ?? raw['error'];
     if (rawMsg is String && rawMsg.trim().isNotEmpty) return rawMsg.trim();
     final trx = raw['transaction'];
     if (trx is Map<String, dynamic>) {

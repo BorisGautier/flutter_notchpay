@@ -15,7 +15,11 @@ app with a polished, ready-made checkout sheet — no WebView, no manual
 polling loop, no PCI scope creep.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BorisGautier/flutter_notchpay/main/doc/checkout_flow.svg" width="720" alt="flutter_notchpay checkout flow" />
+  <img src="doc/screenshots/1.png" width="220" alt="Select Payment Channel" />
+  &nbsp;&nbsp;
+  <img src="doc/screenshots/2.png" width="220" alt="Mobile Money Form" />
+  &nbsp;&nbsp;
+  <img src="doc/screenshots/3.png" width="220" alt="Processing Payment" />
 </p>
 
 📖 **[Read the complete usage guide](doc/USAGE.md)** for every service,

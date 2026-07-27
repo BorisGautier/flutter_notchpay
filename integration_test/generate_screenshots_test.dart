@@ -11,7 +11,8 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Capture real high-quality screenshots on real target', (tester) async {
+  testWidgets('Capture real high-quality screenshots on real target',
+      (tester) async {
     var fetchCount = 0;
     final client = MockClient((request) async {
       if (request.method == 'POST' && request.url.path == '/payments') {

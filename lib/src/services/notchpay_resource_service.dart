@@ -16,6 +16,7 @@ class NotchPayResourceService {
   Future<List<NotchPayChannel>> channels({String? country}) async {
     try {
       final upperCountry = country?.toUpperCase();
+      final lowerCountry = country?.toLowerCase();
       var json = await _client.get(
         '/channels',
         query: upperCountry != null ? {'country': upperCountry} : null,
@@ -25,10 +26,28 @@ class NotchPayResourceService {
         json = await _client.get('/channels');
         items = json['channels'] ?? json['data'] ?? json['items'] ?? const [];
       }
-      final list = (items as Iterable)
+      var list = (items as Iterable)
           .map((e) => NotchPayChannel.fromJson(e as Map<String, dynamic>))
           .toList(growable: false);
-      if (list.isNotEmpty) return list;
+
+      if (upperCountry != null && lowerCountry != null && list.isNotEmpty) {
+        list = list.where((c) {
+          if (c.countries.isNotEmpty) {
+            return c.countries.contains(upperCountry);
+          }
+          if (c.code.toLowerCase().startsWith('$lowerCountry.')) return true;
+          return c.kind == NotchPayChannelKind.card ||
+              c.kind == NotchPayChannelKind.bank ||
+              c.kind == NotchPayChannelKind.mobileMoney;
+        }).toList(growable: false);
+      }
+
+      final uniqueMap = <String, NotchPayChannel>{};
+      for (final channel in list) {
+        uniqueMap.putIfAbsent(channel.code, () => channel);
+      }
+      final uniqueList = uniqueMap.values.toList(growable: false);
+      if (uniqueList.isNotEmpty) return uniqueList;
     } catch (_) {}
 
     return const [
@@ -45,10 +64,10 @@ class NotchPayResourceService {
         currencies: ['XAF'],
       ),
       NotchPayChannel(
-        code: 'card',
-        name: 'Credit or Debit Card',
+        code: 'yoomee',
+        name: 'YooMee Money',
         countries: ['CM'],
-        currencies: ['XAF', 'XOF', 'USD'],
+        currencies: ['XAF'],
       ),
     ];
   }
