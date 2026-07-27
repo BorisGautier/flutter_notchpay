@@ -18,12 +18,10 @@ class CheckoutPage extends StatefulWidget {
 class _CheckoutPageState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController(text: '1500');
-  final _phoneController = TextEditingController(text: '+237670123456');
 
   @override
   void dispose() {
     _amountController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -34,7 +32,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       context,
       amount: amount,
       currency: 'XAF',
-      phone: _phoneController.text,
       description: 'flutter_notchpay example purchase',
     );
   }
@@ -106,21 +103,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           final amount = double.tryParse(value ?? '');
                           if (amount == null || amount <= 0) {
                             return 'Enter a valid amount';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          labelText: 'Phone number',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Enter your phone number';
                           }
                           return null;
                         },

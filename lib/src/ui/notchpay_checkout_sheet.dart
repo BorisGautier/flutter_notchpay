@@ -30,6 +30,7 @@ const _maxSheetWidth = 480.0;
 const _mobileMoneyKinds = {
   NotchPayChannelKind.mtn,
   NotchPayChannelKind.orange,
+  NotchPayChannelKind.yoomee,
   NotchPayChannelKind.mobileMoney,
 };
 
@@ -168,15 +169,29 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
   }
 
   Future<void> _submitMobileMoney(String phone) async {
-    final payment = _payment;
     final channel = _selectedChannel;
-    if (payment == null || channel == null) return;
+    if (channel == null) return;
 
     setState(() {
       _submitting = true;
       _mobileMoneyError = null;
     });
     try {
+      var payment = _payment;
+      if (payment == null) {
+        final req = widget.request.customer == null
+            ? NotchPayCheckoutRequest(
+                amount: widget.request.amount,
+                currency: widget.request.currency,
+                description: widget.request.description,
+                reference: widget.request.reference,
+                metadata: widget.request.metadata,
+                customer: NotchPayCheckoutCustomer(phone: phone),
+              )
+            : widget.request;
+        payment = await widget.paymentService.initialize(req);
+      }
+
       final updated = await widget.paymentService.complete(
         payment.reference,
         channel: channel.code,
@@ -195,15 +210,21 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
         _submitting = false;
         _mobileMoneyError = error.message;
       });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _mobileMoneyError = error.toString();
+      });
     }
   }
 
   Future<void> _startRedirectFlow(NotchPayChannel channel) async {
-    final payment = _payment;
-    if (payment == null) return;
-
     try {
-      var current = payment;
+      var current = _payment;
+      if (current == null) {
+        current = await widget.paymentService.initialize(widget.request);
+      }
       if (current.authorizationUrl == null) {
         current = await widget.paymentService
             .complete(current.reference, channel: channel.code);
@@ -267,6 +288,21 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
         .pop(result ?? const NotchPayCheckoutResult.cancelled());
   }
 
+  bool get _canGoBack =>
+      (_step == _Step.mobileMoneyForm ||
+          (_step == _Step.result && _payment?.status.isSuccess != true)) &&
+      !_submitting;
+
+  void _goBack() {
+    if (!_canGoBack) return;
+    setState(() {
+      _step = _Step.selectChannel;
+      _selectedChannel = null;
+      _mobileMoneyError = null;
+      _failureMessage = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = NotchPayTheme.of(context);
@@ -310,6 +346,16 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                 ],
                 Row(
                   children: [
+                    if (_canGoBack) ...[
+                      IconButton(
+                        onPressed: _goBack,
+                        icon: Icon(Icons.arrow_back_rounded,
+                            color: theme.onSurfaceColor),
+                        tooltip: MaterialLocalizations.of(context)
+                            .backButtonTooltip,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                     Image.asset(
                       'assets/logo.png',
                       package: 'flutter_notchpay',
@@ -421,12 +467,15 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
           onSubmit: _submitMobileMoney,
         );
       case _Step.processing:
-        return NotchPayProcessingView(
-          message: _selectedChannel != null &&
-                  _mobileMoneyKinds.contains(_selectedChannel!.kind)
+        final message = switch (_selectedChannel?.kind) {
+          NotchPayChannelKind.mtn => l10n.mtnInstructions,
+          NotchPayChannelKind.orange => l10n.orangeInstructions,
+          NotchPayChannelKind.yoomee => l10n.yoomeeInstructions,
+          _ => _mobileMoneyKinds.contains(_selectedChannel?.kind)
               ? l10n.mobileMoneyInstructions
               : l10n.redirectInstructions,
-        );
+        };
+        return NotchPayProcessingView(message: message);
       case _Step.result:
         return _buildResult(l10n);
     }

@@ -25,7 +25,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     BuildContext context, {
     required double amount,
     required String currency,
-    required String phone,
+    String? phone,
     String? description,
   }) async {
     emit(const CheckoutInProgress());
@@ -36,7 +36,9 @@ class CheckoutCubit extends Cubit<CheckoutState> {
         amount: amount,
         currency: currency,
         description: description,
-        customer: NotchPayCheckoutCustomer(phone: phone),
+        customer: phone != null && phone.trim().isNotEmpty
+            ? NotchPayCheckoutCustomer(phone: phone)
+            : null,
       ),
     );
 

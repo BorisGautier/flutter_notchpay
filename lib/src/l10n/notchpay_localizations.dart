@@ -23,8 +23,12 @@ class NotchPayLocalizations {
     required this.enterValidPhoneNumber,
     required this.confirmOnYourPhone,
     required this.mobileMoneyInstructions,
+    required this.mtnInstructions,
+    required this.orangeInstructions,
+    required this.yoomeeInstructions,
     required this.redirectInstructions,
     required this.choosePaymentMethod,
+    required this.changePaymentMethod,
     required this.paymentSuccessTitle,
     required this.paymentSuccessMessage,
     required this.paymentFailedTitle,
@@ -46,10 +50,17 @@ class NotchPayLocalizations {
     enterValidPhoneNumber: 'Enter a valid mobile number',
     confirmOnYourPhone: 'Confirm on your phone',
     mobileMoneyInstructions:
-        'Dial the USSD prompt or approve the request on your phone to confirm this payment.',
+        'Approve the USSD prompt on your phone to confirm this payment.',
+    mtnInstructions:
+        'Approve the prompt on your phone or dial *126# to confirm the MTN Mobile Money payment.',
+    orangeInstructions:
+        'Approve the prompt on your phone or dial #150*50# to confirm the Orange Money payment.',
+    yoomeeInstructions:
+        'Approve the prompt on your phone or dial *855# to confirm the YooMee Money payment.',
     redirectInstructions:
         'Complete your payment in the secure window, then come back here.',
     choosePaymentMethod: 'Choose a payment method',
+    changePaymentMethod: 'Change payment method',
     paymentSuccessTitle: 'Payment successful',
     paymentSuccessMessage: 'Your payment was received. Thank you!',
     paymentFailedTitle: 'Payment failed',
@@ -71,10 +82,17 @@ class NotchPayLocalizations {
     enterValidPhoneNumber: 'Entrez un numéro mobile valide',
     confirmOnYourPhone: 'Confirmez sur votre téléphone',
     mobileMoneyInstructions:
-        'Composez le code USSD ou validez la demande sur votre téléphone pour confirmer ce paiement.',
+        'Validez la demande USSD sur votre téléphone pour confirmer ce paiement.',
+    mtnInstructions:
+        'Validez la notification sur votre téléphone ou composez le *126# pour confirmer le paiement MTN Mobile Money.',
+    orangeInstructions:
+        'Validez la notification sur votre téléphone ou composez le #150*50# pour confirmer le paiement Orange Money.',
+    yoomeeInstructions:
+        'Validez la notification sur votre téléphone ou composez le *855# pour confirmer le paiement YooMee Money.',
     redirectInstructions:
         'Terminez votre paiement dans la fenêtre sécurisée, puis revenez ici.',
     choosePaymentMethod: 'Choisissez un moyen de paiement',
+    changePaymentMethod: 'Changer de moyen de paiement',
     paymentSuccessTitle: 'Paiement réussi',
     paymentSuccessMessage: 'Votre paiement a bien été reçu. Merci !',
     paymentFailedTitle: 'Échec du paiement',
@@ -115,12 +133,20 @@ class NotchPayLocalizations {
   /// payments.
   final String mobileMoneyInstructions;
 
+  /// Operator-specific USSD instructions.
+  final String mtnInstructions;
+  final String orangeInstructions;
+  final String yoomeeInstructions;
+
   /// Instructions shown under [confirmOnYourPhone] for channels completed
   /// through a hosted redirect (e.g. Card).
   final String redirectInstructions;
 
   /// Label shown above the list of payment channels.
   final String choosePaymentMethod;
+
+  /// Label for going back to channel selection.
+  final String changePaymentMethod;
 
   /// Headline shown when the payment succeeds.
   final String paymentSuccessTitle;
