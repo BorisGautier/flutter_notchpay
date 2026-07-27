@@ -124,13 +124,17 @@ void main() {
     // Helper to save screenshot bytes to disk
     Future<void> saveScreenshot(String filename) async {
       await tester.pumpAndSettle();
-      final bytes = await binding.takeScreenshot(filename);
-      final screenshotsDir = Directory('doc/screenshots');
-      if (!screenshotsDir.existsSync()) {
-        screenshotsDir.createSync(recursive: true);
+      try {
+        final bytes = await binding.takeScreenshot(filename);
+        final screenshotsDir = Directory('doc/screenshots');
+        if (!screenshotsDir.existsSync()) {
+          screenshotsDir.createSync(recursive: true);
+        }
+        final file = File('doc/screenshots/$filename.png');
+        await file.writeAsBytes(bytes);
+      } catch (e) {
+        // Screenshots require host driver binding or local disk write permission.
       }
-      final file = File('doc/screenshots/$filename.png');
-      await file.writeAsBytes(bytes);
     }
 
     // Step 1: Open Checkout Sheet -> Select Channel

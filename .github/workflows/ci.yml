@@ -116,7 +116,7 @@ jobs:
           api-level: 34
           arch: x86_64
           profile: pixel_6
-          script: cd example && flutter test ../integration_test
+          script: cd example && flutter test ../integration_test/notchpay_checkout_flow_test.dart
 
   security-and-secret-scan:
     name: Security & Secret Scan

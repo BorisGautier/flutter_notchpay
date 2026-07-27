@@ -111,6 +111,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       const SizedBox(height: 24),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedCountry,
+                        isExpanded: true,
                         decoration: const InputDecoration(
                           labelText: 'Country',
                           border: OutlineInputBorder(),
