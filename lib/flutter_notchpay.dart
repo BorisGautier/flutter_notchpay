@@ -15,6 +15,7 @@ export 'src/models/notchpay_checkout_result.dart';
 export 'src/models/notchpay_country.dart';
 export 'src/models/notchpay_currency.dart';
 export 'src/models/notchpay_customer.dart';
+export 'src/models/notchpay_environment.dart';
 export 'src/models/notchpay_identity.dart';
 export 'src/models/notchpay_payment.dart';
 export 'src/models/notchpay_payment_method.dart';

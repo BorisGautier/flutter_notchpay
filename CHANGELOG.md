@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `NotchPayEnvironment` (`sandbox`/`live`), detected automatically from the
+  public key. `NotchPay.instance.environment` / `.isSandbox` / `.isLive`
+  expose it, and `checkout()` shows a "Sandbox mode" banner automatically
+  when a test key is detected.
+- The checkout sheet now caps its own width and stays centered on tablets,
+  desktop, and web instead of stretching edge-to-edge.
+- `.github/labels.yml` + a sync workflow: repository labels are now defined
+  as code.
+- `.github/SETUP.md`: one-time repository admin checklist (branch
+  protection, pub.dev automated publishing, Codecov, labels).
+- `doc/USAGE.md`: an exhaustive, section-by-section usage guide covering
+  every service, model, and utility this package exposes.
+
 ## [0.1.0] - 2026-07-27
 
 ### Added

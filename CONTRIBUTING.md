@@ -14,6 +14,11 @@ branching model and the checks your PR needs to pass.
   `fix/phone-validation`), then open a PR **against `dev`**.
 - Releases are cut by merging `dev` into `main` and pushing a `vX.Y.Z` tag,
   which triggers [`release.yml`](.github/workflows/release.yml).
+- `main` is a protected branch (required reviews + passing CI). Labels are
+  defined declaratively in [`.github/labels.yml`](.github/labels.yml) and
+  synced automatically. If you have repository admin access, see
+  [`.github/SETUP.md`](.github/SETUP.md) for the one-time setup
+  (branch protection, pub.dev publishing, Codecov).
 
 ## Getting set up
 

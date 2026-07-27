@@ -8,6 +8,7 @@ import '../l10n/notchpay_localizations.dart';
 import '../models/notchpay_channel.dart';
 import '../models/notchpay_checkout_request.dart';
 import '../models/notchpay_checkout_result.dart';
+import '../models/notchpay_environment.dart';
 import '../models/notchpay_payment.dart';
 import '../models/notchpay_payment_status.dart';
 import '../services/notchpay_payment_service.dart';
@@ -20,6 +21,11 @@ import 'widgets/notchpay_status_view.dart';
 
 const _pollInterval = Duration(seconds: 4);
 const _pollTimeout = Duration(minutes: 5);
+
+/// Beyond this width (tablets, desktop, web) the sheet stops stretching
+/// edge-to-edge and instead stays a comfortably readable card centered at
+/// the bottom of the screen.
+const _maxSheetWidth = 480.0;
 
 const _mobileMoneyKinds = {
   NotchPayChannelKind.mtn,
@@ -40,6 +46,7 @@ Future<NotchPayCheckoutResult> showNotchPayCheckout(
   String countryCode = 'cm',
   NotchPayThemeData theme = const NotchPayThemeData(),
   NotchPayLocalizations? localizations,
+  NotchPayEnvironment environment = NotchPayEnvironment.live,
 }) async {
   final resolvedTheme = theme.resolve(context);
   final result = await showModalBottomSheet<NotchPayCheckoutResult>(
@@ -55,6 +62,7 @@ Future<NotchPayCheckoutResult> showNotchPayCheckout(
           resourceService: resourceService,
           request: request,
           countryCode: countryCode,
+          environment: environment,
         ),
       );
       if (localizations == null) return sheet;
@@ -72,12 +80,14 @@ class _NotchPayCheckoutSheet extends StatefulWidget {
     required this.resourceService,
     required this.request,
     required this.countryCode,
+    required this.environment,
   });
 
   final NotchPayPaymentService paymentService;
   final NotchPayResourceService resourceService;
   final NotchPayCheckoutRequest request;
   final String countryCode;
+  final NotchPayEnvironment environment;
 
   @override
   State<_NotchPayCheckoutSheet> createState() => _NotchPayCheckoutSheetState();
@@ -247,57 +257,69 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Container(
-        decoration: BoxDecoration(
-          color: theme.surfaceColor,
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(theme.borderRadius)),
-        ),
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color:
-                      (theme.mutedColor ?? Colors.grey).withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
-                ),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: _maxSheetWidth),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.surfaceColor,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(theme.borderRadius),
               ),
             ),
-            Row(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: Text(
-                    NotchPayCurrencyFormatter.format(
-                      widget.request.amount,
-                      widget.request.currency,
-                    ),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: theme.onSurfaceColor,
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: (theme.mutedColor ?? Colors.grey)
+                          .withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: _close,
-                  icon: Icon(Icons.close_rounded, color: theme.mutedColor),
-                  tooltip: l10n.close,
+                if (widget.environment.isSandbox) ...[
+                  _SandboxBanner(theme: theme, label: l10n.sandboxModeBanner),
+                  const SizedBox(height: 12),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        NotchPayCurrencyFormatter.format(
+                          widget.request.amount,
+                          widget.request.currency,
+                        ),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: theme.onSurfaceColor,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _close,
+                      icon: Icon(Icons.close_rounded, color: theme.mutedColor),
+                      tooltip: l10n.close,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 220),
+                  child: _buildStep(theme, l10n),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 220),
-              child: _buildStep(theme, l10n),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -389,6 +411,45 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
       doneLabel: l10n.done,
       onDone: () =>
           _close(NotchPayCheckoutResult.failed(title, payment: payment)),
+    );
+  }
+}
+
+/// A small amber banner warning that the current key is a sandbox/test
+/// key, so nobody mistakes a test payment for a real one (or vice versa).
+class _SandboxBanner extends StatelessWidget {
+  const _SandboxBanner({required this.theme, required this.label});
+
+  final NotchPayThemeData theme;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    const amber = Color(0xFFB45309);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF3C7),
+        borderRadius: BorderRadius.circular(theme.borderRadius * 0.4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.science_outlined, size: 16, color: amber),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: amber,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

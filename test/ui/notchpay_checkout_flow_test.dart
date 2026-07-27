@@ -194,4 +194,69 @@ void main() {
 
     notchPay.dispose();
   });
+
+  testWidgets('shows a sandbox banner only when the public key is a test key',
+      (tester) async {
+    Future<http.Response> handler(http.Request request) async {
+      if (request.method == 'POST' && request.url.path == '/payments') {
+        return http.Response(
+          jsonEncode({
+            'transaction': {
+              'reference': 'trx.test',
+              'amount': 500,
+              'currency': 'XAF',
+              'status': 'pending',
+            },
+          }),
+          200,
+        );
+      }
+      if (request.method == 'GET' && request.url.path == '/channels') {
+        return http.Response(
+          jsonEncode({'channels': <Map<String, dynamic>>[]}),
+          200,
+        );
+      }
+      return http.Response('{}', 404);
+    }
+
+    Future<void> openSheet(WidgetTester tester, NotchPay notchPay) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return ElevatedButton(
+                onPressed: () {
+                  notchPay.checkout(
+                    context,
+                    request: const NotchPayCheckoutRequest(
+                        amount: 500, currency: 'XAF'),
+                  );
+                },
+                child: const Text('Pay'),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.tap(find.text('Pay'));
+      await tester.pumpAndSettle();
+    }
+
+    final sandboxNotchPay =
+        NotchPay(publicKey: 'pk_test_123', httpClient: MockClient(handler));
+    await openSheet(tester, sandboxNotchPay);
+    expect(find.textContaining('Sandbox mode'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+    sandboxNotchPay.dispose();
+
+    final liveNotchPay =
+        NotchPay(publicKey: 'pk_live_123', httpClient: MockClient(handler));
+    await openSheet(tester, liveNotchPay);
+    expect(find.textContaining('Sandbox mode'), findsNothing);
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+    liveNotchPay.dispose();
+  });
 }

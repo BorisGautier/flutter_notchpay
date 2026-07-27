@@ -1,0 +1,103 @@
+# Labels as code, synced to the repository by .github/workflows/labels.yml
+# (using EndBug/label-sync) on every push to `main` that touches this file.
+# Edit here, not in the GitHub UI — manual changes will be overwritten on
+# the next sync.
+
+# --- Type ------------------------------------------------------------
+- name: bug
+  color: "d73a4a"
+  description: Something isn't working as expected
+
+- name: enhancement
+  color: "a2eeef"
+  description: A new feature or improvement
+
+- name: documentation
+  color: "0075ca"
+  description: Improvements or additions to documentation
+
+- name: question
+  color: "d876e3"
+  description: Further information is requested
+
+- name: security
+  color: "b60205"
+  description: A security concern or vulnerability report
+
+- name: performance
+  color: "fbca04"
+  description: About runtime performance or payload size
+
+- name: refactor
+  color: "c5def5"
+  description: Code change that neither fixes a bug nor adds a feature
+
+- name: test
+  color: "bfd4f2"
+  description: About tests or test coverage
+
+- name: ci
+  color: "ededed"
+  description: About GitHub Actions / CI configuration
+
+- name: dependencies
+  color: "0366d6"
+  description: Dependency updates (including Dependabot PRs)
+
+- name: breaking-change
+  color: "e11d21"
+  description: Introduces a breaking API change
+
+# --- Scope -------------------------------------------------------------
+- name: example
+  color: "c2e0c6"
+  description: About the example app
+
+- name: android
+  color: "bfdadc"
+  description: Android-specific
+
+- name: ios
+  color: "bfdadc"
+  description: iOS-specific
+
+- name: web
+  color: "bfdadc"
+  description: Web-specific
+
+- name: mobile-money
+  color: "fef2c0"
+  description: About MTN / Orange Money channels
+
+- name: card
+  color: "fef2c0"
+  description: About card payments / hosted redirect
+
+# --- Status / triage -----------------------------------------------------
+- name: needs-triage
+  color: "ededed"
+  description: Not yet reviewed by a maintainer
+
+- name: good first issue
+  color: "7057ff"
+  description: Good for newcomers
+
+- name: help wanted
+  color: "008672"
+  description: Extra attention or contributors welcome
+
+- name: blocked
+  color: "000000"
+  description: Blocked on something external (upstream API, another issue, ...)
+
+- name: duplicate
+  color: "cfd3d7"
+  description: This issue or pull request already exists
+
+- name: invalid
+  color: "e4e669"
+  description: This doesn't seem right
+
+- name: wontfix
+  color: "ffffff"
+  description: This will not be worked on

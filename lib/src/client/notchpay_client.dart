@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../models/notchpay_environment.dart';
 import 'notchpay_exception.dart';
 
 /// Low level HTTP client for the NotchPay REST API.
@@ -41,6 +42,9 @@ class NotchPayClient {
   final String baseUrl;
 
   final http.Client _httpClient;
+
+  /// Which environment [publicKey] belongs to. See [NotchPayEnvironment].
+  NotchPayEnvironment get environment => NotchPayEnvironment.detect(publicKey);
 
   /// Performs a `GET` request against [path].
   Future<Map<String, dynamic>> get(

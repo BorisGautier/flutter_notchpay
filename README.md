@@ -14,6 +14,10 @@ polling loop, no PCI scope creep.
   <img src="https://raw.githubusercontent.com/BorisGautier/flutter_notchpay/main/doc/checkout_flow.svg" width="720" alt="flutter_notchpay checkout flow" />
 </p>
 
+📖 **[Read the complete usage guide](doc/USAGE.md)** for every service,
+method, and model this package exposes — this README only covers the
+essentials to get you started.
+
 ## Features
 
 - **One call to checkout**: `NotchPay.instance.checkout(context, request: ...)`
@@ -24,18 +28,38 @@ polling loop, no PCI scope creep.
   screen while the SDK polls NotchPay for the final status.
 - **Card & other channels**: completed through NotchPay's own secure hosted
   page (via `url_launcher`), so this package never touches raw card data.
+- **Sandbox-aware**: the SDK detects, from the key itself, whether you're
+  in sandbox or live mode, and shows a "Sandbox mode" banner automatically
+  so nobody mistakes a test payment for a real one. See
+  [Sandbox vs. live](#sandbox-vs-live-mode).
 - **Full API coverage**: customers, payments, channels/currencies/countries,
   payment methods, identity lookup, and the backend-only recipients,
-  transfers, refunds, balance and Connect sub-account endpoints.
+  transfers, refunds, balance and Connect sub-account endpoints. See the
+  [full guide](doc/USAGE.md) for every method.
 - **Typed errors**: `NotchPayApiException`, `NotchPayNetworkException`,
   `NotchPayConfigurationException` — never a raw `Exception`.
 - **Built-in i18n**: English and French out of the box, auto-selected from
   the device locale, overridable per call.
-- **Themeable**: colors, radii and typography follow your app by default;
-  override anything via `NotchPayThemeData`.
+- **Responsive & themeable**: colors, radii and typography follow your app
+  by default; the sheet stays readable on phones, tablets, desktop and web
+  instead of stretching edge-to-edge. Override anything via
+  `NotchPayThemeData`.
 - **Security-first design**: the client SDK only ever needs your **public**
   key. Private-key-only operations refuse to run without one, so you can't
   accidentally ship a secret key in your app. See [Security](#security).
+
+## Getting your API keys
+
+1. Sign up / log in at the [NotchPay Business dashboard](https://business.notchpay.co).
+2. Go to **Settings → API Keys**. You'll see a **sandbox/test** pair and a
+   **live** pair.
+3. Copy the **public key** (`pk_...`) into your app — that's the only
+   credential this package's `checkout()` flow ever needs.
+4. Never copy the **secret key** (`sk_...`) into a mobile app; see
+   [Security](#security).
+
+Full details, including how KYC/business validation gates live mode, are in
+the [usage guide](doc/USAGE.md#1-getting-your-api-keys-notchpay-dashboard).
 
 ## Getting started
 
@@ -106,10 +130,24 @@ NotchPay.instance.checkout(
   request: request,
   localizations: const NotchPayLocalizations(
     payNow: 'Payer',
-    // ...every other field
+    // ...every other field — see doc/USAGE.md#7-localization
   ),
 );
 ```
+
+### Sandbox vs. live mode
+
+```dart
+NotchPay.instance.environment; // NotchPayEnvironment.sandbox or .live
+NotchPay.instance.isSandbox;   // bool
+```
+
+Detected automatically from the public key (NotchPay's own `test` marker
+convention, e.g. `pk_test_...`). When sandbox is detected, `checkout()`
+shows a small "Sandbox mode — no real money will move" banner at the top of
+the sheet; live mode shows nothing extra. See
+[Section 4 of the usage guide](doc/USAGE.md#4-sandbox-vs-live-mode) for the
+exact detection rule.
 
 ## API coverage
 
@@ -127,7 +165,13 @@ NotchPay.instance.checkout(
 | `NotchPay.instance.sync` | list, fetch, initialize, authorize | **private** |
 
 "Private" methods require `NotchPay(publicKey: ..., privateKey: ...)` and
-are meant for trusted backend Dart code — see [Security](#security).
+are meant for trusted backend Dart code — see [Security](#security) and the
+[usage guide, Section 13](doc/USAGE.md#13-backend-only-services-private-key-required)
+for a worked example of each.
+
+Every method, model, and utility (including the Cameroon phone/operator
+detection, card helpers, and currency formatting) is documented with a full
+example in **[doc/USAGE.md](doc/USAGE.md)**.
 
 ## Security
 
@@ -149,7 +193,8 @@ are meant for trusted backend Dart code — see [Security](#security).
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md)
 for the branching model (`dev` → `main`) and the checks your PR needs to
 pass, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community
-guidelines.
+guidelines. Repository maintainers, see [`.github/SETUP.md`](.github/SETUP.md)
+for one-time admin setup (branch protection, labels, pub.dev publishing).
 
 ## License
 

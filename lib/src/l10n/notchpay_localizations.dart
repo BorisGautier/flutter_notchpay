@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+import '../models/notchpay_environment.dart';
+
 /// User-facing strings shown by the checkout sheet.
 ///
 /// This package ships built-in English and French translations and picks
@@ -32,6 +34,7 @@ class NotchPayLocalizations {
     required this.done,
     required this.close,
     required this.retry,
+    required this.sandboxModeBanner,
   });
 
   /// English strings (default / fallback).
@@ -56,6 +59,7 @@ class NotchPayLocalizations {
     done: 'Done',
     close: 'Close',
     retry: 'Try again',
+    sandboxModeBanner: 'Sandbox mode — no real money will move',
   );
 
   /// French strings.
@@ -80,6 +84,7 @@ class NotchPayLocalizations {
     done: 'Terminé',
     close: 'Fermer',
     retry: 'Réessayer',
+    sandboxModeBanner: 'Mode bac à sable — aucun argent réel ne sera déplacé',
   );
 
   static const Map<String, NotchPayLocalizations> _supported = {
@@ -143,6 +148,10 @@ class NotchPayLocalizations {
 
   /// Label offered to retry a failed action.
   final String retry;
+
+  /// Shown in a small banner at the top of the sheet when
+  /// [NotchPayEnvironment.sandbox] is detected.
+  final String sandboxModeBanner;
 
   /// Resolves the applicable translation for [context]:
   ///

@@ -6,6 +6,7 @@ import 'client/notchpay_exception.dart';
 import 'l10n/notchpay_localizations.dart';
 import 'models/notchpay_checkout_request.dart';
 import 'models/notchpay_checkout_result.dart';
+import 'models/notchpay_environment.dart';
 import 'services/notchpay_balance_service.dart';
 import 'services/notchpay_customer_service.dart';
 import 'services/notchpay_identity_service.dart';
@@ -154,6 +155,18 @@ class NotchPay {
   /// Look up and validate Mobile Money / bank account identities.
   final NotchPayIdentityService identity;
 
+  /// Which environment [publicKey] belongs to, detected from the key
+  /// itself (see [NotchPayEnvironment.detect]). [checkout] uses this to
+  /// show a "Sandbox mode" banner so nobody mistakes a test payment for a
+  /// real one, or vice versa.
+  NotchPayEnvironment get environment => _client.environment;
+
+  /// Shorthand for `environment.isSandbox`.
+  bool get isSandbox => environment.isSandbox;
+
+  /// Shorthand for `environment.isLive`.
+  bool get isLive => environment.isLive;
+
   /// Opens a beautiful, native checkout sheet and drives a full payment —
   /// initializing the transaction, letting the customer pick a channel
   /// (Mobile Money or Card), collecting the minimal information required,
@@ -178,6 +191,7 @@ class NotchPay {
       countryCode: countryCode,
       theme: theme,
       localizations: localizations,
+      environment: environment,
     );
   }
 
