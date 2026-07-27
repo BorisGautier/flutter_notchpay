@@ -33,7 +33,9 @@ class NotchPayLocalizations {
     required this.paymentSuccessMessage,
     required this.paymentFailedTitle,
     required this.paymentCancelledTitle,
+    required this.paymentCancelledMessage,
     required this.paymentExpiredTitle,
+    required this.paymentExpiredMessage,
     required this.genericErrorMessage,
     required this.done,
     required this.close,
@@ -65,7 +67,9 @@ class NotchPayLocalizations {
     paymentSuccessMessage: 'Your payment was received. Thank you!',
     paymentFailedTitle: 'Payment failed',
     paymentCancelledTitle: 'Payment cancelled',
+    paymentCancelledMessage: 'The payment was cancelled.',
     paymentExpiredTitle: 'Payment expired',
+    paymentExpiredMessage: 'The payment request has expired. Please try again.',
     genericErrorMessage: 'Something went wrong. Please try again.',
     done: 'Done',
     close: 'Close',
@@ -97,7 +101,9 @@ class NotchPayLocalizations {
     paymentSuccessMessage: 'Votre paiement a bien été reçu. Merci !',
     paymentFailedTitle: 'Échec du paiement',
     paymentCancelledTitle: 'Paiement annulé',
+    paymentCancelledMessage: 'Le paiement a été annulé.',
     paymentExpiredTitle: 'Paiement expiré',
+    paymentExpiredMessage: 'La demande de paiement a expiré. Veuillez réessayer.',
     genericErrorMessage: 'Une erreur est survenue. Veuillez réessayer.',
     done: 'Terminé',
     close: 'Fermer',
@@ -160,8 +166,14 @@ class NotchPayLocalizations {
   /// Headline shown when the customer cancels the payment.
   final String paymentCancelledTitle;
 
+  /// Message shown when the customer cancels the payment.
+  final String paymentCancelledMessage;
+
   /// Headline shown when the payment expires before completion.
   final String paymentExpiredTitle;
+
+  /// Message shown when the payment expires before completion.
+  final String paymentExpiredMessage;
 
   /// A generic fallback error message.
   final String genericErrorMessage;

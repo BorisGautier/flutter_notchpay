@@ -96,6 +96,25 @@ class NotchPayPayment {
   /// The untouched JSON payload returned by the API, for advanced use cases.
   final Map<String, dynamic> raw;
 
+  /// A human-readable message or reason returned by the API for this payment,
+  /// if present.
+  String? get message {
+    final rawMsg = raw['message'] ??
+        raw['reason'] ??
+        raw['status_reason'] ??
+        raw['error'];
+    if (rawMsg is String && rawMsg.trim().isNotEmpty) return rawMsg.trim();
+    final trx = raw['transaction'];
+    if (trx is Map<String, dynamic>) {
+      final trxMsg = trx['message'] ??
+          trx['reason'] ??
+          trx['status_reason'] ??
+          trx['error'];
+      if (trxMsg is String && trxMsg.trim().isNotEmpty) return trxMsg.trim();
+    }
+    return null;
+  }
+
   @override
   String toString() =>
       'NotchPayPayment($reference, $amount $currency, $status)';

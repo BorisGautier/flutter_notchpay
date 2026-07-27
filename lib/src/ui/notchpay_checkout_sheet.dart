@@ -507,18 +507,30 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
       );
     }
 
-    final title = switch (payment.status) {
-      NotchPayPaymentStatus.canceled => l10n.paymentCancelledTitle,
-      NotchPayPaymentStatus.expired => l10n.paymentExpiredTitle,
-      _ => l10n.paymentFailedTitle,
+    final (title, statusMessage) = switch (payment.status) {
+      NotchPayPaymentStatus.canceled => (
+          l10n.paymentCancelledTitle,
+          l10n.paymentCancelledMessage,
+        ),
+      NotchPayPaymentStatus.expired => (
+          l10n.paymentExpiredTitle,
+          l10n.paymentExpiredMessage,
+        ),
+      _ => (
+          l10n.paymentFailedTitle,
+          l10n.genericErrorMessage,
+        ),
     };
+    final message = failureMessage ??
+        payment.message ??
+        statusMessage;
     return NotchPayResultView(
       success: false,
       title: title,
-      message: l10n.genericErrorMessage,
+      message: message,
       doneLabel: l10n.done,
       onDone: () =>
-          _close(NotchPayCheckoutResult.failed(title, payment: payment)),
+          _close(NotchPayCheckoutResult.failed(message, payment: payment)),
     );
   }
 }
