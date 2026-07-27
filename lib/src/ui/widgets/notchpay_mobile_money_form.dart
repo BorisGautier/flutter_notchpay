@@ -20,6 +20,7 @@ class NotchPayMobileMoneyForm extends StatefulWidget {
     required this.initialKind,
     required this.loading,
     required this.onSubmit,
+    this.countryCode,
     this.errorText,
   });
 
@@ -33,6 +34,9 @@ class NotchPayMobileMoneyForm extends StatefulWidget {
   /// Called with the normalized phone number once the form is valid and
   /// submitted.
   final ValueChanged<String> onSubmit;
+
+  /// The active ISO country code (e.g. 'cm', 'ci', 'sn').
+  final String? countryCode;
 
   /// An error message to show below the phone field, e.g. from a failed
   /// submission.
@@ -56,8 +60,10 @@ class _NotchPayMobileMoneyFormState extends State<NotchPayMobileMoneyForm> {
   }
 
   void _onChanged() {
-    final kind = NotchPayPhoneUtils.detectCameroonOperator(_controller.text);
-    if (kind != _detectedKind) setState(() => _detectedKind = kind);
+    final kind = NotchPayPhoneUtils.detectOperator(_controller.text);
+    if (kind != _detectedKind && kind != NotchPayChannelKind.mobileMoney) {
+      setState(() => _detectedKind = kind);
+    }
   }
 
   @override
@@ -68,13 +74,41 @@ class _NotchPayMobileMoneyFormState extends State<NotchPayMobileMoneyForm> {
 
   void _submit() {
     if (_formKey.currentState?.validate() != true) return;
-    widget.onSubmit(NotchPayPhoneUtils.normalize(_controller.text));
+    var text = _controller.text.trim();
+    if (!text.startsWith('+') && widget.countryCode != null) {
+      final prefix = switch (widget.countryCode!.toLowerCase()) {
+        'ci' => '+225',
+        'ng' => '+234',
+        'sn' => '+221',
+        'ga' => '+241',
+        'bj' => '+229',
+        'bf' => '+226',
+        'ug' => '+256',
+        'rw' => '+250',
+        'cd' => '+243',
+        'tz' => '+255',
+        'ke' => '+254',
+        'gh' => '+233',
+        'td' => '+235',
+        'cf' => '+236',
+        'cg' => '+242',
+        _ => '+237',
+      };
+      var digits = text.replaceAll(RegExp(r'[^0-9]'), '');
+      if (digits.startsWith('0')) digits = digits.substring(1);
+      text = '$prefix$digits';
+    }
+    widget.onSubmit(text);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = NotchPayTheme.of(context);
     final l10n = NotchPayLocalizations.of(context);
+    final dynamicHint = NotchPayPhoneUtils.getPhoneHint(
+      _detectedKind,
+      countryCode: widget.countryCode,
+    );
 
     return Form(
       key: _formKey,
@@ -100,11 +134,11 @@ class _NotchPayMobileMoneyFormState extends State<NotchPayMobileMoneyForm> {
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9+ ]')),
-                    LengthLimitingTextInputFormatter(13),
+                    LengthLimitingTextInputFormatter(16),
                   ],
                   style: TextStyle(fontSize: 17, color: theme.onSurfaceColor),
                   decoration: InputDecoration(
-                    hintText: l10n.phoneHint,
+                    hintText: dynamicHint,
                     errorText: widget.errorText,
                     border: OutlineInputBorder(
                       borderRadius:
@@ -117,7 +151,8 @@ class _NotchPayMobileMoneyFormState extends State<NotchPayMobileMoneyForm> {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.enterPhoneNumber;
                     }
-                    if (!NotchPayPhoneUtils.isValidCameroonMobile(value)) {
+                    final digits = value.replaceAll(RegExp(r'[^0-9+]'), '');
+                    if (digits.length < 8) {
                       return l10n.enterValidPhoneNumber;
                     }
                     return null;

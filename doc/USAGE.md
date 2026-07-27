@@ -142,6 +142,14 @@ shows no banner at all, keeping the paid UI clean.
 
 ## 5. The checkout flow
 
+<p align="center">
+  <img src="screenshots/1.png" width="220" alt="Select Payment Channel" />
+  &nbsp;&nbsp;
+  <img src="screenshots/2.png" width="220" alt="Mobile Money Form" />
+  &nbsp;&nbsp;
+  <img src="screenshots/3.png" width="220" alt="Processing Payment" />
+</p>
+
 ```dart
 final result = await NotchPay.instance.checkout(
   context,
@@ -164,7 +172,7 @@ final result = await NotchPay.instance.checkout(
 | `amount` | `double` | Must be `> 0`. Major unit (e.g. `1500` for 1500 XAF). |
 | `currency` | `String` | ISO 4217, e.g. `XAF`. |
 | `description` | `String?` | Shown to the customer and merchant. |
-| `customer` | `NotchPayCheckoutCustomer?` | At least one of `name`/`email`/`phone`. `phone` is required for Mobile Money. |
+| `customer` | `NotchPayCheckoutCustomer?` | Optional. Pre-fills customer info (`name`/`email`/`phone`). If omitted or no `phone` is provided, the sheet prompts the customer for their phone number upon selecting a Mobile Money channel. |
 | `reference` | `String?` | Your own idempotency reference. |
 | `metadata` | `Map<String, dynamic>` | Free-form, echoed back on fetch/webhooks. |
 
@@ -432,7 +440,7 @@ key throws `NotchPayConfigurationException` immediately, by design.
 final recipient = await backend.recipients.create(
   const NotchPayRecipient(
     reference: '', // ignored on create
-    name: 'Chapdel Kamga',
+    name: 'Boris Gautier',
     country: 'CM',
     currency: 'XAF',
     channel: 'cm.mobile',
@@ -455,7 +463,7 @@ final transfer = await backend.transfers.initiate(
   recipient: {
     'account_number': '+237651608133',
     'country': 'CM',
-    'name': 'Chapdel Kamga',
+    'name': 'Boris Gautier',
   },
   description: 'Payout',
 );

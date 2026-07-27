@@ -51,7 +51,7 @@ test` (see the example's [README](example/README.md)).
 To exercise the full checkout flow on a device/emulator:
 
 ```sh
-flutter test integration_test
+cd example && flutter test ../integration_test
 ```
 
 ## Commit / PR conventions

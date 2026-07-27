@@ -9,6 +9,48 @@ enum NotchPayChannelKind {
   /// Orange Money.
   orange,
 
+  /// YooMee Money.
+  yoomee,
+
+  /// Moov Money.
+  moov,
+
+  /// Wave Mobile Money.
+  wave,
+
+  /// Airtel Money / AirtelTigo.
+  airtel,
+
+  /// Vodafone / Vodacom.
+  vodafone,
+
+  /// Safaricom M-Pesa.
+  mpesa,
+
+  /// Free Mobile Money Senegal.
+  free,
+
+  /// Express Union / EU Mobile.
+  eumm,
+
+  /// Glo Mobile.
+  glo,
+
+  /// Tigo Pesa.
+  tigo,
+
+  /// HaloPesa.
+  halopesa,
+
+  /// Equitel.
+  equitel,
+
+  /// Telkom Tkash.
+  tkash,
+
+  /// Green Network Côte d'Ivoire.
+  green,
+
   /// Generic mobile money channel (operator picked automatically).
   mobileMoney,
 
@@ -21,17 +63,76 @@ enum NotchPayChannelKind {
   /// Anything not recognized above.
   other;
 
-  /// Infers a [NotchPayChannelKind] from a NotchPay channel code such as
-  /// `cm.mtn`, `cm.orange`, `cm.mobile` or `card`.
-  static NotchPayChannelKind fromCode(String code) {
-    final normalized = code.toLowerCase();
-    if (normalized.contains('mtn')) return NotchPayChannelKind.mtn;
-    if (normalized.contains('orange')) return NotchPayChannelKind.orange;
-    if (normalized.contains('card')) return NotchPayChannelKind.card;
-    if (normalized.contains('bank') || normalized.contains('ussd')) {
+  /// Infers a [NotchPayChannelKind] from a NotchPay channel code/slug or name.
+  static NotchPayChannelKind fromCode(String code, [String? name]) {
+    final normalized = '${code.toLowerCase()} ${name?.toLowerCase() ?? ''}';
+    if (normalized.contains('yoomee')) {
+      return NotchPayChannelKind.yoomee;
+    }
+    if (normalized.contains('mtn') || normalized.contains('momo')) {
+      return NotchPayChannelKind.mtn;
+    }
+    if (normalized.contains('orange') ||
+        RegExp(r'\bom\b').hasMatch(normalized)) {
+      return NotchPayChannelKind.orange;
+    }
+    if (normalized.contains('moov')) {
+      return NotchPayChannelKind.moov;
+    }
+    if (normalized.contains('wave')) {
+      return NotchPayChannelKind.wave;
+    }
+    if (normalized.contains('airtel')) {
+      return NotchPayChannelKind.airtel;
+    }
+    if (normalized.contains('vodafone') || normalized.contains('vodacom')) {
+      return NotchPayChannelKind.vodafone;
+    }
+    if (normalized.contains('mpesa') || normalized.contains('m-pesa')) {
+      return NotchPayChannelKind.mpesa;
+    }
+    if (normalized.contains('free')) {
+      return NotchPayChannelKind.free;
+    }
+    if (normalized.contains('express') ||
+        normalized.contains('eu') ||
+        normalized.contains('eumm')) {
+      return NotchPayChannelKind.eumm;
+    }
+    if (normalized.contains('glo')) {
+      return NotchPayChannelKind.glo;
+    }
+    if (normalized.contains('tigo')) {
+      return NotchPayChannelKind.tigo;
+    }
+    if (normalized.contains('halopesa') || normalized.contains('halo')) {
+      return NotchPayChannelKind.halopesa;
+    }
+    if (normalized.contains('equitel')) {
+      return NotchPayChannelKind.equitel;
+    }
+    if (normalized.contains('tkash') || normalized.contains('telkom')) {
+      return NotchPayChannelKind.tkash;
+    }
+    if (normalized.contains('green')) {
+      return NotchPayChannelKind.green;
+    }
+    if (normalized.contains('card') ||
+        normalized.contains('carte') ||
+        normalized.contains('visa') ||
+        normalized.contains('mastercard')) {
+      return NotchPayChannelKind.card;
+    }
+    if (normalized.contains('bank') ||
+        normalized.contains('banque') ||
+        normalized.contains('transfer') ||
+        normalized.contains('virement') ||
+        normalized.contains('ussd')) {
       return NotchPayChannelKind.bank;
     }
-    if (normalized.contains('mobile')) return NotchPayChannelKind.mobileMoney;
+    if (normalized.contains('mobile') || normalized.contains('wallet')) {
+      return NotchPayChannelKind.mobileMoney;
+    }
     return NotchPayChannelKind.other;
   }
 }
@@ -51,11 +152,17 @@ class NotchPayChannel {
 
   /// Parses a channel from a decoded NotchPay API JSON response.
   factory NotchPayChannel.fromJson(Map<String, dynamic> json) {
+    final rawCurrencies = json['currencies'] ??
+        (json['currency'] != null ? [json['currency']] : null);
     return NotchPayChannel(
-      code: (json['code'] ?? json['channel'] ?? '') as String,
+      code: (json['code'] ??
+          json['id'] ??
+          json['slug'] ??
+          json['channel'] ??
+          '') as String,
       name: (json['name'] ?? json['label'] ?? '') as String,
       countries: _stringList(json['countries']),
-      currencies: _stringList(json['currencies']),
+      currencies: _stringList(rawCurrencies),
       raw: json,
     );
   }
@@ -76,7 +183,7 @@ class NotchPayChannel {
   final Map<String, dynamic> raw;
 
   /// The broad family this channel belongs to, used to pick UI treatment.
-  NotchPayChannelKind get kind => NotchPayChannelKind.fromCode(code);
+  NotchPayChannelKind get kind => NotchPayChannelKind.fromCode(code, name);
 
   static List<String> _stringList(Object? value) {
     if (value is Iterable) {

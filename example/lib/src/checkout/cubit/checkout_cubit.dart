@@ -11,7 +11,7 @@ import 'checkout_state.dart';
 class CheckoutCubit extends Cubit<CheckoutState> {
   /// Creates the cubit.
   CheckoutCubit({required this.notchPay, required this.database})
-    : super(const CheckoutIdle());
+      : super(const CheckoutIdle());
 
   /// The configured SDK instance used to start checkouts.
   final NotchPay notchPay;
@@ -25,18 +25,22 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     BuildContext context, {
     required double amount,
     required String currency,
-    required String phone,
+    String? countryCode,
+    String? phone,
     String? description,
   }) async {
     emit(const CheckoutInProgress());
 
     final result = await notchPay.checkout(
       context,
+      countryCode: countryCode,
       request: NotchPayCheckoutRequest(
         amount: amount,
         currency: currency,
         description: description,
-        customer: NotchPayCheckoutCustomer(phone: phone),
+        customer: phone != null && phone.trim().isNotEmpty
+            ? NotchPayCheckoutCustomer(phone: phone)
+            : null,
       ),
     );
 

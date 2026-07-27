@@ -21,6 +21,49 @@ class NotchPayChannelBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final assetPath = switch (kind) {
+      NotchPayChannelKind.mtn => 'assets/momo.jpg',
+      NotchPayChannelKind.orange => 'assets/om.png',
+      NotchPayChannelKind.yoomee => 'assets/yoomee.png',
+      NotchPayChannelKind.moov => 'assets/moov.png',
+      NotchPayChannelKind.airtel => 'assets/airtel.png',
+      NotchPayChannelKind.vodafone => 'assets/vodafone.png',
+      NotchPayChannelKind.mpesa => 'assets/mpesa.png',
+      NotchPayChannelKind.free => 'assets/free.png',
+      NotchPayChannelKind.glo => 'assets/glo.png',
+      NotchPayChannelKind.tigo => 'assets/tigo.png',
+      _ => null,
+    };
+
+    final fallback = _buildFallback(context);
+
+    if (assetPath == null) return fallback;
+
+    return Container(
+      width: size,
+      height: size,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.3),
+      ),
+      child: Image.asset(
+        assetPath,
+        package: 'flutter_notchpay',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Image.asset(
+          assetPath,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => fallback,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallback(BuildContext context) {
     final style = _styleFor(kind);
     return Container(
       width: size,
@@ -55,6 +98,76 @@ class NotchPayChannelBadge extends StatelessWidget {
           background: Color(0xFFFF6600),
           foreground: Colors.white,
           label: 'OM',
+        ),
+      NotchPayChannelKind.yoomee => const _BadgeStyle(
+          background: Color(0xFFE20074),
+          foreground: Colors.white,
+          label: 'YM',
+        ),
+      NotchPayChannelKind.moov => const _BadgeStyle(
+          background: Color(0xFF005CA9),
+          foreground: Colors.white,
+          label: 'MOOV',
+        ),
+      NotchPayChannelKind.wave => const _BadgeStyle(
+          background: Color(0xFF1DC3F4),
+          foreground: Colors.white,
+          label: 'WAVE',
+        ),
+      NotchPayChannelKind.airtel => const _BadgeStyle(
+          background: Color(0xFFE2001A),
+          foreground: Colors.white,
+          label: 'AIRTEL',
+        ),
+      NotchPayChannelKind.vodafone => const _BadgeStyle(
+          background: Color(0xFFE60000),
+          foreground: Colors.white,
+          label: 'VODA',
+        ),
+      NotchPayChannelKind.mpesa => const _BadgeStyle(
+          background: Color(0xFF4CAF50),
+          foreground: Colors.white,
+          label: 'MPESA',
+        ),
+      NotchPayChannelKind.free => const _BadgeStyle(
+          background: Color(0xFFE2001A),
+          foreground: Colors.white,
+          label: 'FREE',
+        ),
+      NotchPayChannelKind.eumm => const _BadgeStyle(
+          background: Color(0xFF008000),
+          foreground: Colors.white,
+          label: 'EU',
+        ),
+      NotchPayChannelKind.glo => const _BadgeStyle(
+          background: Color(0xFF43B02A),
+          foreground: Colors.white,
+          label: 'GLO',
+        ),
+      NotchPayChannelKind.tigo => const _BadgeStyle(
+          background: Color(0xFF002A54),
+          foreground: Colors.white,
+          label: 'TIGO',
+        ),
+      NotchPayChannelKind.halopesa => const _BadgeStyle(
+          background: Color(0xFFFF6600),
+          foreground: Colors.white,
+          label: 'HALO',
+        ),
+      NotchPayChannelKind.equitel => const _BadgeStyle(
+          background: Color(0xFF7A1C1C),
+          foreground: Colors.white,
+          label: 'EQUI',
+        ),
+      NotchPayChannelKind.tkash => const _BadgeStyle(
+          background: Color(0xFF0089CF),
+          foreground: Colors.white,
+          label: 'TKASH',
+        ),
+      NotchPayChannelKind.green => const _BadgeStyle(
+          background: Color(0xFF10B981),
+          foreground: Colors.white,
+          label: 'GREEN',
         ),
       NotchPayChannelKind.mobileMoney => const _BadgeStyle(
           background: Color(0xFF0EA5E9),

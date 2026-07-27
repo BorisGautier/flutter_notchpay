@@ -17,19 +17,30 @@ class NotchPayLocalizations {
   /// that a custom translation can never leave a string blank.
   const NotchPayLocalizations({
     required this.payNow,
+    required this.emailAddress,
+    required this.emailHint,
+    required this.enterEmailAddress,
+    required this.enterValidEmailAddress,
+    required this.continueToPayment,
     required this.mobileMoneyNumber,
     required this.phoneHint,
     required this.enterPhoneNumber,
     required this.enterValidPhoneNumber,
     required this.confirmOnYourPhone,
     required this.mobileMoneyInstructions,
+    required this.mtnInstructions,
+    required this.orangeInstructions,
+    required this.yoomeeInstructions,
     required this.redirectInstructions,
     required this.choosePaymentMethod,
+    required this.changePaymentMethod,
     required this.paymentSuccessTitle,
     required this.paymentSuccessMessage,
     required this.paymentFailedTitle,
     required this.paymentCancelledTitle,
+    required this.paymentCancelledMessage,
     required this.paymentExpiredTitle,
+    required this.paymentExpiredMessage,
     required this.genericErrorMessage,
     required this.done,
     required this.close,
@@ -40,51 +51,80 @@ class NotchPayLocalizations {
   /// English strings (default / fallback).
   static const NotchPayLocalizations en = NotchPayLocalizations(
     payNow: 'Pay now',
+    emailAddress: 'Email address',
+    emailHint: 'name@example.com',
+    enterEmailAddress: 'Enter your email address',
+    enterValidEmailAddress: 'Enter a valid email address',
+    continueToPayment: 'Continue to payment',
     mobileMoneyNumber: 'Mobile money number',
     phoneHint: '6XX XXX XXX',
     enterPhoneNumber: 'Enter your phone number',
     enterValidPhoneNumber: 'Enter a valid mobile number',
     confirmOnYourPhone: 'Confirm on your phone',
     mobileMoneyInstructions:
-        'Dial the USSD prompt or approve the request on your phone to confirm this payment.',
+        'Approve the USSD prompt on your phone to confirm this payment.',
+    mtnInstructions:
+        'Approve the prompt on your phone or dial *126# to confirm the MTN Mobile Money payment.',
+    orangeInstructions:
+        'Approve the prompt on your phone or dial #150*50# to confirm the Orange Money payment.',
+    yoomeeInstructions:
+        'Approve the prompt on your phone or dial *855# to confirm the YooMee Money payment.',
     redirectInstructions:
         'Complete your payment in the secure window, then come back here.',
     choosePaymentMethod: 'Choose a payment method',
+    changePaymentMethod: 'Change payment method',
     paymentSuccessTitle: 'Payment successful',
     paymentSuccessMessage: 'Your payment was received. Thank you!',
     paymentFailedTitle: 'Payment failed',
     paymentCancelledTitle: 'Payment cancelled',
+    paymentCancelledMessage: 'The payment was cancelled.',
     paymentExpiredTitle: 'Payment expired',
+    paymentExpiredMessage: 'The payment request has expired. Please try again.',
     genericErrorMessage: 'Something went wrong. Please try again.',
     done: 'Done',
     close: 'Close',
     retry: 'Try again',
-    sandboxModeBanner: 'Sandbox mode — no real money will move',
+    sandboxModeBanner: 'Sandbox mode no real money will move',
   );
 
   /// French strings.
   static const NotchPayLocalizations fr = NotchPayLocalizations(
     payNow: 'Payer maintenant',
+    emailAddress: 'Adresse e-mail',
+    emailHint: 'nom@exemple.com',
+    enterEmailAddress: 'Entrez votre adresse e-mail',
+    enterValidEmailAddress: 'Entrez une adresse e-mail valide',
+    continueToPayment: 'Continuer vers le paiement',
     mobileMoneyNumber: 'Numéro mobile money',
     phoneHint: '6XX XXX XXX',
     enterPhoneNumber: 'Entrez votre numéro de téléphone',
     enterValidPhoneNumber: 'Entrez un numéro mobile valide',
     confirmOnYourPhone: 'Confirmez sur votre téléphone',
     mobileMoneyInstructions:
-        'Composez le code USSD ou validez la demande sur votre téléphone pour confirmer ce paiement.',
+        'Validez la demande USSD sur votre téléphone pour confirmer ce paiement.',
+    mtnInstructions:
+        'Validez la notification sur votre téléphone ou composez le *126# pour confirmer le paiement MTN Mobile Money.',
+    orangeInstructions:
+        'Validez la notification sur votre téléphone ou composez le #150*50# pour confirmer le paiement Orange Money.',
+    yoomeeInstructions:
+        'Validez la notification sur votre téléphone ou composez le *855# pour confirmer le paiement YooMee Money.',
     redirectInstructions:
         'Terminez votre paiement dans la fenêtre sécurisée, puis revenez ici.',
     choosePaymentMethod: 'Choisissez un moyen de paiement',
+    changePaymentMethod: 'Changer de moyen de paiement',
     paymentSuccessTitle: 'Paiement réussi',
     paymentSuccessMessage: 'Votre paiement a bien été reçu. Merci !',
     paymentFailedTitle: 'Échec du paiement',
     paymentCancelledTitle: 'Paiement annulé',
+    paymentCancelledMessage: 'Le paiement a été annulé.',
     paymentExpiredTitle: 'Paiement expiré',
+    paymentExpiredMessage:
+        'La demande de paiement a expiré. Veuillez réessayer.',
     genericErrorMessage: 'Une erreur est survenue. Veuillez réessayer.',
     done: 'Terminé',
     close: 'Fermer',
     retry: 'Réessayer',
-    sandboxModeBanner: 'Mode bac à sable — aucun argent réel ne sera déplacé',
+    sandboxModeBanner: 'Mode Test aucun argent réel ne sera déplacé',
   );
 
   static const Map<String, NotchPayLocalizations> _supported = {
@@ -94,6 +134,21 @@ class NotchPayLocalizations {
 
   /// Label of the main call-to-action button, e.g. `Pay now`.
   final String payNow;
+
+  /// Label above the Email input field.
+  final String emailAddress;
+
+  /// Placeholder text shown inside the empty email field.
+  final String emailHint;
+
+  /// Validation error shown when the email field is left empty.
+  final String enterEmailAddress;
+
+  /// Validation error shown when the email is not valid.
+  final String enterValidEmailAddress;
+
+  /// Label on the button to proceed after entering email.
+  final String continueToPayment;
 
   /// Label above the Mobile Money phone field.
   final String mobileMoneyNumber;
@@ -115,12 +170,24 @@ class NotchPayLocalizations {
   /// payments.
   final String mobileMoneyInstructions;
 
+  /// MTN USSD instructions.
+  final String mtnInstructions;
+
+  /// Orange USSD instructions.
+  final String orangeInstructions;
+
+  /// YooMee USSD instructions.
+  final String yoomeeInstructions;
+
   /// Instructions shown under [confirmOnYourPhone] for channels completed
   /// through a hosted redirect (e.g. Card).
   final String redirectInstructions;
 
   /// Label shown above the list of payment channels.
   final String choosePaymentMethod;
+
+  /// Label for going back to channel selection.
+  final String changePaymentMethod;
 
   /// Headline shown when the payment succeeds.
   final String paymentSuccessTitle;
@@ -134,8 +201,14 @@ class NotchPayLocalizations {
   /// Headline shown when the customer cancels the payment.
   final String paymentCancelledTitle;
 
+  /// Message shown when the customer cancels the payment.
+  final String paymentCancelledMessage;
+
   /// Headline shown when the payment expires before completion.
   final String paymentExpiredTitle;
+
+  /// Message shown when the payment expires before completion.
+  final String paymentExpiredMessage;
 
   /// A generic fallback error message.
   final String genericErrorMessage;

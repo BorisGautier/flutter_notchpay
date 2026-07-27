@@ -14,8 +14,9 @@ void main() {
   NotchPay.init(
     publicKey: const String.fromEnvironment(
       'NOTCHPAY_PUBLIC_KEY',
-      defaultValue: 'pk_test_replace_with_your_public_key',
+      defaultValue: 'pk_test.Vbnxxxxxxxxxx',
     ),
+    defaultCountryCode: 'cm',
   );
   runApp(const NotchPayExampleApp());
 }

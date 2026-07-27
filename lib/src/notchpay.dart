@@ -19,6 +19,7 @@ import 'services/notchpay_sync_service.dart';
 import 'services/notchpay_transfer_service.dart';
 import 'ui/notchpay_checkout_sheet.dart';
 import 'ui/theme/notchpay_theme.dart';
+import 'utils/notchpay_phone_utils.dart';
 
 /// The entry point of the flutter_notchpay SDK.
 ///
@@ -64,6 +65,7 @@ class NotchPay {
   NotchPay({
     required String publicKey,
     String? privateKey,
+    String defaultCountryCode = 'cm',
     String baseUrl = 'https://api.notchpay.co',
     http.Client? httpClient,
   }) : this._(
@@ -73,9 +75,10 @@ class NotchPay {
             baseUrl: baseUrl,
             httpClient: httpClient,
           ),
+          defaultCountryCode: defaultCountryCode,
         );
 
-  NotchPay._(this._client)
+  NotchPay._(this._client, {this.defaultCountryCode = 'cm'})
       : customers = NotchPayCustomerService(_client),
         payments = NotchPayPaymentService(_client),
         resources = NotchPayResourceService(_client),
@@ -86,6 +89,9 @@ class NotchPay {
         balance = NotchPayBalanceService(_client),
         sync = NotchPaySyncService(_client),
         identity = NotchPayIdentityService(_client);
+
+  /// Default ISO country code used when initializing checkout sheets.
+  final String defaultCountryCode;
 
   static NotchPay? _instance;
 
@@ -110,12 +116,14 @@ class NotchPay {
   static void init({
     required String publicKey,
     String? privateKey,
+    String defaultCountryCode = 'cm',
     String baseUrl = 'https://api.notchpay.co',
     http.Client? httpClient,
   }) {
     _instance = NotchPay(
       publicKey: publicKey,
       privateKey: privateKey,
+      defaultCountryCode: defaultCountryCode,
       baseUrl: baseUrl,
       httpClient: httpClient,
     );
@@ -179,16 +187,24 @@ class NotchPay {
   Future<NotchPayCheckoutResult> checkout(
     BuildContext context, {
     required NotchPayCheckoutRequest request,
-    String countryCode = 'cm',
+    String? countryCode,
     NotchPayThemeData theme = const NotchPayThemeData(),
     NotchPayLocalizations? localizations,
   }) {
+    final phone = request.customer?.phone;
+    final phoneCountry =
+        phone != null ? NotchPayPhoneUtils.detectCountryCode(phone) : null;
+    final deviceCountry =
+        View.of(context).platformDispatcher.locale.countryCode;
+    final resolvedCountry =
+        (countryCode ?? phoneCountry ?? deviceCountry ?? 'cm').toLowerCase();
+
     return showNotchPayCheckout(
       context,
       paymentService: payments,
       resourceService: resources,
       request: request,
-      countryCode: countryCode,
+      countryCode: resolvedCountry,
       theme: theme,
       localizations: localizations,
       environment: environment,

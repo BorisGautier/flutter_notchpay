@@ -13,9 +13,11 @@ import '../models/notchpay_payment.dart';
 import '../models/notchpay_payment_status.dart';
 import '../services/notchpay_payment_service.dart';
 import '../services/notchpay_resource_service.dart';
+import '../utils/notchpay_phone_utils.dart';
 import '../utils/notchpay_currency_formatter.dart';
 import 'theme/notchpay_theme.dart';
 import 'widgets/notchpay_channel_grid.dart';
+import 'widgets/notchpay_email_form.dart';
 import 'widgets/notchpay_mobile_money_form.dart';
 import 'widgets/notchpay_status_view.dart';
 
@@ -30,6 +32,19 @@ const _maxSheetWidth = 480.0;
 const _mobileMoneyKinds = {
   NotchPayChannelKind.mtn,
   NotchPayChannelKind.orange,
+  NotchPayChannelKind.yoomee,
+  NotchPayChannelKind.moov,
+  NotchPayChannelKind.wave,
+  NotchPayChannelKind.airtel,
+  NotchPayChannelKind.vodafone,
+  NotchPayChannelKind.mpesa,
+  NotchPayChannelKind.free,
+  NotchPayChannelKind.eumm,
+  NotchPayChannelKind.glo,
+  NotchPayChannelKind.tigo,
+  NotchPayChannelKind.halopesa,
+  NotchPayChannelKind.equitel,
+  NotchPayChannelKind.tkash,
   NotchPayChannelKind.mobileMoney,
 };
 
@@ -72,7 +87,14 @@ Future<NotchPayCheckoutResult> showNotchPayCheckout(
   return result ?? const NotchPayCheckoutResult.cancelled();
 }
 
-enum _Step { loading, selectChannel, mobileMoneyForm, processing, result }
+enum _Step {
+  loading,
+  selectChannel,
+  mobileMoneyForm,
+  emailForm,
+  processing,
+  result
+}
 
 class _NotchPayCheckoutSheet extends StatefulWidget {
   const _NotchPayCheckoutSheet({
@@ -118,47 +140,94 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
 
   Future<void> _initialize() async {
     try {
+      final phone = widget.request.customer?.phone;
+      final detectedCountry =
+          phone != null ? NotchPayPhoneUtils.detectCountryCode(phone) : null;
+      final country = detectedCountry ?? widget.countryCode;
+
+      final channels = await widget.resourceService.channels(country: country);
+      if (mounted) {
+        setState(() {
+          _channels = channels;
+          _step = _Step.selectChannel;
+        });
+      }
+
       final payment = await widget.paymentService.initialize(widget.request);
-      final channels =
-          await widget.resourceService.channels(country: widget.countryCode);
-      if (!mounted) return;
-      setState(() {
-        _payment = payment;
-        _channels = channels;
-        _step = _Step.selectChannel;
-      });
+      if (mounted) {
+        setState(() {
+          _payment = payment;
+        });
+      }
     } on NotchPayException catch (error) {
       if (!mounted) return;
-      setState(() {
-        _failureMessage = error.message;
-        _step = _Step.result;
-      });
+      if (_channels.isNotEmpty) {
+        // If channels were already loaded, stay on selectChannel and log failure on submission
+      } else {
+        setState(() {
+          _failureMessage = error.message;
+          _step = _Step.result;
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      if (_channels.isEmpty) {
+        setState(() {
+          _failureMessage = error.toString();
+          _step = _Step.result;
+        });
+      }
     }
   }
 
   void _selectChannel(NotchPayChannel channel) {
-    setState(() {
-      _selectedChannel = channel;
-      _mobileMoneyError = null;
-      _step = _mobileMoneyKinds.contains(channel.kind)
-          ? _Step.mobileMoneyForm
-          : _Step.loading;
-    });
-    if (!_mobileMoneyKinds.contains(channel.kind)) {
-      unawaited(_startRedirectFlow(channel));
+    _selectedChannel = channel;
+    _mobileMoneyError = null;
+
+    if (_mobileMoneyKinds.contains(channel.kind)) {
+      setState(() {
+        _step = _Step.mobileMoneyForm;
+      });
+      return;
+    }
+
+    final email = widget.request.customer?.email;
+    if (email != null && email.trim().isNotEmpty) {
+      setState(() {
+        _step = _Step.loading;
+      });
+      unawaited(_startRedirectFlow(channel, email: email));
+    } else {
+      setState(() {
+        _step = _Step.emailForm;
+      });
     }
   }
 
   Future<void> _submitMobileMoney(String phone) async {
-    final payment = _payment;
     final channel = _selectedChannel;
-    if (payment == null || channel == null) return;
+    if (channel == null) return;
 
     setState(() {
       _submitting = true;
       _mobileMoneyError = null;
     });
     try {
+      var payment = _payment;
+      if (payment == null) {
+        final req = widget.request.customer == null
+            ? NotchPayCheckoutRequest(
+                amount: widget.request.amount,
+                currency: widget.request.currency,
+                description: widget.request.description,
+                reference: widget.request.reference,
+                metadata: widget.request.metadata,
+                customer: NotchPayCheckoutCustomer(phone: phone),
+              )
+            : widget.request;
+        payment = await widget.paymentService.initialize(req);
+      }
+
       final updated = await widget.paymentService.complete(
         payment.reference,
         channel: channel.code,
@@ -177,21 +246,61 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
         _submitting = false;
         _mobileMoneyError = error.message;
       });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _mobileMoneyError = error.toString();
+      });
     }
   }
 
-  Future<void> _startRedirectFlow(NotchPayChannel channel) async {
-    final payment = _payment;
-    if (payment == null) return;
+  Future<void> _submitEmail(String email) async {
+    final channel = _selectedChannel;
+    if (channel == null) return;
+    setState(() {
+      _submitting = true;
+      _mobileMoneyError = null;
+      _step = _Step.loading;
+    });
+    await _startRedirectFlow(channel, email: email);
+  }
 
+  Future<void> _startRedirectFlow(NotchPayChannel channel,
+      {String? email}) async {
     try {
-      var current = payment;
+      var current = _payment;
+      if (current == null) {
+        final existingCust = widget.request.customer;
+        final cust = existingCust != null
+            ? NotchPayCheckoutCustomer(
+                email: email ?? existingCust.email,
+                phone: existingCust.phone,
+                name: existingCust.name,
+              )
+            : NotchPayCheckoutCustomer(email: email);
+        final req = NotchPayCheckoutRequest(
+          amount: widget.request.amount,
+          currency: widget.request.currency,
+          description: widget.request.description,
+          reference: widget.request.reference,
+          metadata: widget.request.metadata,
+          customer: cust,
+        );
+        current = await widget.paymentService.initialize(req);
+      }
       if (current.authorizationUrl == null) {
+        final Map<String, dynamic> data = email != null
+            ? <String, dynamic>{'email': email}
+            : const <String, dynamic>{};
         current = await widget.paymentService
-            .complete(current.reference, channel: channel.code);
+            .complete(current.reference, channel: channel.code, data: data);
       }
       if (!mounted) return;
-      setState(() => _payment = current);
+      setState(() {
+        _payment = current;
+        _submitting = false;
+      });
 
       final url = current.authorizationUrl;
       if (url != null) {
@@ -206,7 +315,15 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
     } on NotchPayException catch (error) {
       if (!mounted) return;
       setState(() {
+        _submitting = false;
         _failureMessage = error.message;
+        _step = _Step.result;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _failureMessage = error.toString();
         _step = _Step.result;
       });
     }
@@ -247,6 +364,22 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
   void _close([NotchPayCheckoutResult? result]) {
     Navigator.of(context)
         .pop(result ?? const NotchPayCheckoutResult.cancelled());
+  }
+
+  bool get _canGoBack =>
+      (_step == _Step.mobileMoneyForm ||
+          _step == _Step.emailForm ||
+          (_step == _Step.result && _payment?.status.isSuccess != true)) &&
+      !_submitting;
+
+  void _goBack() {
+    if (!_canGoBack) return;
+    setState(() {
+      _step = _Step.selectChannel;
+      _selectedChannel = null;
+      _mobileMoneyError = null;
+      _failureMessage = null;
+    });
   }
 
   @override
@@ -292,6 +425,27 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                 ],
                 Row(
                   children: [
+                    if (_canGoBack) ...[
+                      IconButton(
+                        onPressed: _goBack,
+                        icon: Icon(Icons.arrow_back_rounded,
+                            color: theme.onSurfaceColor),
+                        tooltip:
+                            MaterialLocalizations.of(context).backButtonTooltip,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    Image.asset(
+                      'assets/logo.png',
+                      package: 'flutter_notchpay',
+                      height: 28,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        'assets/logo.png',
+                        height: 28,
+                        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         NotchPayCurrencyFormatter.format(
@@ -313,9 +467,44 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 220),
-                  child: _buildStep(theme, l10n),
+                Flexible(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 220),
+                      child: _buildStep(theme, l10n),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.lock_outline_rounded,
+                        size: 12, color: theme.mutedColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Secured by ',
+                      style: TextStyle(fontSize: 11, color: theme.mutedColor),
+                    ),
+                    Image.asset(
+                      'assets/logo.png',
+                      package: 'flutter_notchpay',
+                      height: 14,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        'assets/logo.png',
+                        height: 14,
+                        errorBuilder: (_, __, ___) => Text(
+                          'NotchPay',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.mutedColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -358,16 +547,28 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
           initialKind:
               _selectedChannel?.kind ?? NotchPayChannelKind.mobileMoney,
           loading: _submitting,
+          countryCode: widget.countryCode,
           errorText: _mobileMoneyError,
           onSubmit: _submitMobileMoney,
         );
+      case _Step.emailForm:
+        return NotchPayEmailForm(
+          initialKind: _selectedChannel?.kind ?? NotchPayChannelKind.card,
+          loading: _submitting,
+          initialEmail: widget.request.customer?.email,
+          errorText: _mobileMoneyError,
+          onSubmit: _submitEmail,
+        );
       case _Step.processing:
-        return NotchPayProcessingView(
-          message: _selectedChannel != null &&
-                  _mobileMoneyKinds.contains(_selectedChannel!.kind)
+        final message = switch (_selectedChannel?.kind) {
+          NotchPayChannelKind.mtn => l10n.mtnInstructions,
+          NotchPayChannelKind.orange => l10n.orangeInstructions,
+          NotchPayChannelKind.yoomee => l10n.yoomeeInstructions,
+          _ => _mobileMoneyKinds.contains(_selectedChannel?.kind)
               ? l10n.mobileMoneyInstructions
               : l10n.redirectInstructions,
-        );
+        };
+        return NotchPayProcessingView(message: message);
       case _Step.result:
         return _buildResult(l10n);
     }
@@ -399,18 +600,28 @@ class _NotchPayCheckoutSheetState extends State<_NotchPayCheckoutSheet> {
       );
     }
 
-    final title = switch (payment.status) {
-      NotchPayPaymentStatus.canceled => l10n.paymentCancelledTitle,
-      NotchPayPaymentStatus.expired => l10n.paymentExpiredTitle,
-      _ => l10n.paymentFailedTitle,
+    final (title, statusMessage) = switch (payment.status) {
+      NotchPayPaymentStatus.canceled => (
+          l10n.paymentCancelledTitle,
+          l10n.paymentCancelledMessage,
+        ),
+      NotchPayPaymentStatus.expired => (
+          l10n.paymentExpiredTitle,
+          l10n.paymentExpiredMessage,
+        ),
+      _ => (
+          l10n.paymentFailedTitle,
+          l10n.genericErrorMessage,
+        ),
     };
+    final message = failureMessage ?? payment.message ?? statusMessage;
     return NotchPayResultView(
       success: false,
       title: title,
-      message: l10n.genericErrorMessage,
+      message: message,
       doneLabel: l10n.done,
       onDone: () =>
-          _close(NotchPayCheckoutResult.failed(title, payment: payment)),
+          _close(NotchPayCheckoutResult.failed(message, payment: payment)),
     );
   }
 }
