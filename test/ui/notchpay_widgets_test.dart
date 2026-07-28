@@ -43,7 +43,8 @@ void main() {
       expect(submittedPhone, '+237670123456');
     });
 
-    testWidgets('NotchPayMobileMoneyForm formats correctly for Ivory Coast (ci)',
+    testWidgets(
+        'NotchPayMobileMoneyForm formats correctly for Ivory Coast (ci)',
         (tester) async {
       String? submittedPhone;
       await tester.pumpWidget(
@@ -69,7 +70,8 @@ void main() {
       expect(submittedPhone, '+225707123456');
     });
 
-    testWidgets('NotchPayEmailForm validates email and submits', (tester) async {
+    testWidgets('NotchPayEmailForm validates email and submits',
+        (tester) async {
       String? submittedEmail;
       await tester.pumpWidget(
         MaterialApp(

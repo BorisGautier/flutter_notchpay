@@ -390,8 +390,7 @@ void main() {
       expect(refund.amount, 500.0);
     });
 
-    test('NotchPaySyncService list, fetch, initialize and authorize',
-        () async {
+    test('NotchPaySyncService list, fetch, initialize and authorize', () async {
       late http.Request captured;
       final service = NotchPaySyncService(
         NotchPayClient(

@@ -207,7 +207,6 @@ class NotchPayThemeData {
       );
 }
 
-
 /// Makes the resolved [NotchPayThemeData] available to every widget under
 /// the checkout sheet.
 class NotchPayTheme extends InheritedWidget {

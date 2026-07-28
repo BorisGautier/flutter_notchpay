@@ -106,8 +106,7 @@ void main() {
             200,
           );
         }
-        if (request.method == 'GET' &&
-            request.url.path == '/payments/trx.cb') {
+        if (request.method == 'GET' && request.url.path == '/payments/trx.cb') {
           return http.Response(
             jsonEncode({
               'reference': 'trx.cb',
