@@ -220,7 +220,8 @@ class NotchPay {
     final deviceCountry =
         View.of(context).platformDispatcher.locale.countryCode;
     final resolvedCountry =
-        (countryCode ?? phoneCountry ?? deviceCountry ?? 'cm').toLowerCase();
+        (countryCode ?? phoneCountry ?? deviceCountry ?? defaultCountryCode)
+            .toLowerCase();
 
     final result = await showNotchPayCheckout(
       context,

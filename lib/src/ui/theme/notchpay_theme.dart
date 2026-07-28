@@ -177,7 +177,36 @@ class NotchPayThemeData {
       fontFamily: fontFamily ?? this.fontFamily,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is NotchPayThemeData &&
+        other.primaryColor == primaryColor &&
+        other.onPrimaryColor == onPrimaryColor &&
+        other.surfaceColor == surfaceColor &&
+        other.onSurfaceColor == onSurfaceColor &&
+        other.mutedColor == mutedColor &&
+        other.successColor == successColor &&
+        other.errorColor == errorColor &&
+        other.borderRadius == borderRadius &&
+        other.fontFamily == fontFamily;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        primaryColor,
+        onPrimaryColor,
+        surfaceColor,
+        onSurfaceColor,
+        mutedColor,
+        successColor,
+        errorColor,
+        borderRadius,
+        fontFamily,
+      );
 }
+
 
 /// Makes the resolved [NotchPayThemeData] available to every widget under
 /// the checkout sheet.
