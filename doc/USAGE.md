@@ -624,7 +624,7 @@ convenient way to share models/serialization with your Flutter app. The
 directly on `NotchPayClient` + individual services if you need a
 Flutter-free backend usage.
 
-## 17. Testing your integration
+### Unit & Widget Testing (Mocked)
 
 Every constructor accepts an `httpClient`, so you can fully mock the
 network in your own tests exactly like this package's own test suite does:
@@ -644,5 +644,26 @@ final notchPay = NotchPay(
 );
 ```
 
+### Live Sandbox API Testing
+
+You can also run live integration tests directly against the real NotchPay Sandbox environment without hardcoding secrets in your source code:
+
+1. Export your test keys as environment variables:
+   ```bash
+   # Windows (PowerShell)
+   $env:NOTCHPAY_TEST_PUBLIC_KEY="pk_test_..."
+   $env:NOTCHPAY_TEST_PRIVATE_KEY="sk_test_..."
+
+   # Linux / macOS
+   export NOTCHPAY_TEST_PUBLIC_KEY="pk_test_..."
+   export NOTCHPAY_TEST_PRIVATE_KEY="sk_test_..."
+   ```
+
+2. Run the live test suite:
+   ```bash
+   flutter test test/live_api_test.dart
+   ```
+
 See this package's own `test/` and `integration_test/` folders for complete
-examples, including a full end-to-end widget test of the checkout sheet.
+examples, including full end-to-end widget tests of the checkout sheet.
+
