@@ -23,6 +23,67 @@ class NotchPayThemeData {
     this.fontFamily,
   });
 
+  // ---------------------------------------------------------------------------
+  // Ready-made presets
+  // ---------------------------------------------------------------------------
+
+  /// A sleek dark theme with NotchPay's signature violet accent.
+  ///
+  /// ```dart
+  /// theme: NotchPayThemeData.darkMode()
+  /// ```
+  factory NotchPayThemeData.darkMode() => const NotchPayThemeData(
+        primaryColor: Color(0xFF5B2A86),
+        onPrimaryColor: Colors.white,
+        surfaceColor: Color(0xFF17181D),
+        onSurfaceColor: Colors.white,
+        mutedColor: Color(0xFF9CA3AF),
+      );
+
+  /// A fresh emerald-green theme — great for eco / fintech brands.
+  ///
+  /// ```dart
+  /// theme: NotchPayThemeData.emerald()
+  /// ```
+  factory NotchPayThemeData.emerald() => const NotchPayThemeData(
+        primaryColor: Color(0xFF059669),
+        onPrimaryColor: Colors.white,
+        surfaceColor: Colors.white,
+        onSurfaceColor: Color(0xFF14151A),
+        mutedColor: Color(0xFF6B7280),
+        successColor: Color(0xFF047857),
+      );
+
+  /// A deep-purple premium theme — elegant and modern.
+  ///
+  /// ```dart
+  /// theme: NotchPayThemeData.purple()
+  /// ```
+  factory NotchPayThemeData.purple() => const NotchPayThemeData(
+        primaryColor: Color(0xFF7C3AED),
+        onPrimaryColor: Colors.white,
+        surfaceColor: Color(0xFF0F0A1E),
+        onSurfaceColor: Colors.white,
+        mutedColor: Color(0xFFA78BFA),
+      );
+
+  /// A deep-ocean blue theme — ideal for tech and fintech products.
+  ///
+  /// ```dart
+  /// theme: NotchPayThemeData.ocean()
+  /// ```
+  factory NotchPayThemeData.ocean() => const NotchPayThemeData(
+        primaryColor: Color(0xFF0284C7),
+        onPrimaryColor: Colors.white,
+        surfaceColor: Color(0xFF0C1A2E),
+        onSurfaceColor: Colors.white,
+        mutedColor: Color(0xFF7DD3FC),
+      );
+
+  // ---------------------------------------------------------------------------
+  // Static constants
+  // ---------------------------------------------------------------------------
+
   /// The default light-mode theme, using NotchPay's signature purple.
   static const NotchPayThemeData light = NotchPayThemeData(
     surfaceColor: Colors.white,
@@ -36,6 +97,10 @@ class NotchPayThemeData {
     onSurfaceColor: Colors.white,
     mutedColor: Color(0xFF9CA3AF),
   );
+
+  // ---------------------------------------------------------------------------
+  // Fields
+  // ---------------------------------------------------------------------------
 
   /// The brand / primary color used for buttons, selected states and
   /// highlights.
@@ -65,6 +130,10 @@ class NotchPayThemeData {
 
   /// Optional font family override. Defaults to the ambient [Theme]'s font.
   final String? fontFamily;
+
+  // ---------------------------------------------------------------------------
+  // Methods
+  // ---------------------------------------------------------------------------
 
   /// Resolves this theme against the ambient [context], falling back to
   /// [light]/[dark] and the surrounding [ThemeData] for any unset field.

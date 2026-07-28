@@ -220,7 +220,58 @@ switch (result.status) {
 result.isSuccess; // shorthand for status == NotchPayCheckoutStatus.success
 ```
 
+### Optional callbacks
+
+As a convenience, you can provide callbacks instead of (or alongside)
+`await`-ing the returned `Future`:
+
+```dart
+await NotchPay.instance.checkout(
+  context,
+  request: request,
+  onSuccess: (payment) {
+    // Dispatch a BLoC event, navigate, etc.
+    context.read<OrderCubit>().markPaid(payment);
+  },
+  onCancelled: () => Navigator.of(context).pop(),
+  onError: (error) => ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text('$error'))),
+);
+```
+
+The callbacks are called **after** the sheet closes, before `checkout()`
+completes. The `Future` value always reflects the same outcome as the
+callback that was invoked — both styles are fully consistent.
+
 ## 6. Theming
+
+### Ready-made presets
+
+Four named factory constructors give you a polished theme in one line:
+
+| Factory | Primary | Surface | Notes |
+| --- | --- | --- | --- |
+| `NotchPayThemeData.darkMode()` | NotchPay violet `#5B2A86` | `#17181D` | Dark background variant of the default. |
+| `NotchPayThemeData.emerald()` | Emerald `#059669` | white | Great for eco / fintech brands. |
+| `NotchPayThemeData.purple()` | Deep purple `#7C3AED` | `#0F0A1E` | Premium dark look. |
+| `NotchPayThemeData.ocean()` | Sky blue `#0284C7` | `#0C1A2E` | Tech / banking feel. |
+
+```dart
+NotchPay.instance.checkout(
+  context,
+  request: request,
+  theme: NotchPayThemeData.emerald(),
+);
+```
+
+Every preset returns a plain `NotchPayThemeData` and is compatible with
+`copyWith()` for fine-tuning:
+
+```dart
+theme: NotchPayThemeData.ocean().copyWith(borderRadius: 12)
+```
+
+### Full custom theme
 
 ```dart
 NotchPay.instance.checkout(
