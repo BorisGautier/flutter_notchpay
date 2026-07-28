@@ -3,7 +3,7 @@ description: >-
   A secure, complete, and beautiful Flutter SDK for NotchPay. Accept Mobile
   Money and Card payments in your native Flutter app with a polished,
   ready-made checkout experience.
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/BorisGautier/flutter_notchpay
 repository: https://github.com/BorisGautier/flutter_notchpay
 issue_tracker: https://github.com/BorisGautier/flutter_notchpay/issues

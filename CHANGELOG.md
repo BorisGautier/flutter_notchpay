@@ -5,10 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2026-07-28
 
 ### Added
 
+- **Checkout callbacks** — `NotchPay.checkout()` now accepts three optional
+  callback parameters (`onSuccess`, `onCancelled`, `onError`) as a convenient
+  alternative to `await`-ing the returned `Future` and switching on the
+  result status. The `Future` is still returned and both styles can be used
+  together. No breaking change.
+- **Ready-made theme presets** — four named factory constructors on
+  `NotchPayThemeData`: `darkMode()` (dark surface, NotchPay violet),
+  `emerald()` (green accent, white surface), `purple()` (deep-purple on
+  near-black), and `ocean()` (sky-blue on dark-navy). All presets are
+  compatible with `copyWith()` for further customization.
 - `NotchPayEnvironment` (`sandbox`/`live`), detected automatically from the
   public key. `NotchPay.instance.environment` / `.isSandbox` / `.isLive`
   expose it, and `checkout()` shows a "Sandbox mode" banner automatically
@@ -49,5 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   demonstrating theming, `flutter_bloc` state management, and a local
   `drift`-backed payment history cache.
 
-[Unreleased]: https://github.com/BorisGautier/flutter_notchpay/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/BorisGautier/flutter_notchpay/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/BorisGautier/flutter_notchpay/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/BorisGautier/flutter_notchpay/releases/tag/v0.1.0

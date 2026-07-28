@@ -45,6 +45,20 @@ All three run in CI ([`ci.yml`](.github/workflows/ci.yml)) and must pass.
 method, and field needs a dartdoc comment (see existing code for the
 expected style).
 
+To run live integration tests against the actual NotchPay Sandbox API:
+
+```sh
+# Windows (PowerShell)
+$env:NOTCHPAY_TEST_PUBLIC_KEY="pk_test_..."
+$env:NOTCHPAY_TEST_PRIVATE_KEY="sk_test_..."
+flutter test test/live_api_test.dart
+
+# Linux / macOS
+export NOTCHPAY_TEST_PUBLIC_KEY="pk_test_..."
+export NOTCHPAY_TEST_PRIVATE_KEY="sk_test_..."
+flutter test test/live_api_test.dart
+```
+
 If you touched `example/`, also run its own `flutter analyze` / `flutter
 test` (see the example's [README](example/README.md)).
 

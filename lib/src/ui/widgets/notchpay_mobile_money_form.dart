@@ -80,6 +80,10 @@ class _NotchPayMobileMoneyFormState extends State<NotchPayMobileMoneyForm> {
         'ci' => '+225',
         'ng' => '+234',
         'sn' => '+221',
+        'ml' => '+223',
+        'gn' => '+224',
+        'ne' => '+227',
+        'tg' => '+228',
         'ga' => '+241',
         'bj' => '+229',
         'bf' => '+226',
@@ -92,6 +96,7 @@ class _NotchPayMobileMoneyFormState extends State<NotchPayMobileMoneyForm> {
         'td' => '+235',
         'cf' => '+236',
         'cg' => '+242',
+        'cm' => '+237',
         _ => '+237',
       };
       var digits = text.replaceAll(RegExp(r'[^0-9]'), '');

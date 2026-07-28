@@ -113,7 +113,43 @@ See [`example/`](example) for a complete, runnable app — including theming,
 with `drift` (both `flutter_bloc` and `drift` are used by the example app
 only; the package itself depends on neither).
 
+### Callbacks
+
+Instead of `await`-ing and switching on the result, you can pass optional
+callbacks directly:
+
+```dart
+await NotchPay.instance.checkout(
+  context,
+  request: request,
+  onSuccess: (payment) => print('Paid: ${payment.reference}'),
+  onCancelled: () => print('Cancelled'),
+  onError: (error) => print('Error: $error'),
+);
+```
+
+The `Future` is still returned — callbacks and `await` can be used together
+or independently, whichever fits your architecture best (e.g. BLoC events).
+
 ### Theming
+
+Use any of the four ready-made presets:
+
+```dart
+// Dark mode (NotchPay violet)
+theme: NotchPayThemeData.darkMode()
+
+// Emerald green
+theme: NotchPayThemeData.emerald()
+
+// Deep purple
+theme: NotchPayThemeData.purple()
+
+// Ocean blue
+theme: NotchPayThemeData.ocean()
+```
+
+Or craft your own:
 
 ```dart
 NotchPay.instance.checkout(
@@ -124,6 +160,12 @@ NotchPay.instance.checkout(
     borderRadius: 28,
   ),
 );
+```
+
+Presets can be further customised with `copyWith`:
+
+```dart
+theme: NotchPayThemeData.emerald().copyWith(borderRadius: 32)
 ```
 
 ### Localization

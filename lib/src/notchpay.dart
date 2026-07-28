@@ -7,6 +7,7 @@ import 'l10n/notchpay_localizations.dart';
 import 'models/notchpay_checkout_request.dart';
 import 'models/notchpay_checkout_result.dart';
 import 'models/notchpay_environment.dart';
+import 'models/notchpay_payment.dart';
 import 'services/notchpay_balance_service.dart';
 import 'services/notchpay_customer_service.dart';
 import 'services/notchpay_identity_service.dart';
@@ -184,22 +185,45 @@ class NotchPay {
   /// 3166-1 alpha-2, defaults to `cm` for Cameroon). Customize the sheet's
   /// look with [theme], and override the built-in English/French strings
   /// with [localizations] if you need another language.
+  ///
+  /// ### Optional callbacks
+  ///
+  /// [onSuccess], [onCancelled] and [onError] are called once the sheet is
+  /// dismissed, as a convenience alternative to `await`-ing the returned
+  /// [Future] and switching on [NotchPayCheckoutResult.status]:
+  ///
+  /// ```dart
+  /// await NotchPay.instance.checkout(
+  ///   context,
+  ///   request: request,
+  ///   onSuccess: (payment) => print('Paid: ${payment.reference}'),
+  ///   onCancelled: () => print('Cancelled'),
+  ///   onError: (error) => print('Error: $error'),
+  /// );
+  /// ```
+  ///
+  /// The [Future] is still returned and can be used alongside the callbacks —
+  /// they are not mutually exclusive.
   Future<NotchPayCheckoutResult> checkout(
     BuildContext context, {
     required NotchPayCheckoutRequest request,
     String? countryCode,
     NotchPayThemeData theme = const NotchPayThemeData(),
     NotchPayLocalizations? localizations,
-  }) {
+    void Function(NotchPayPayment payment)? onSuccess,
+    void Function()? onCancelled,
+    void Function(Object error)? onError,
+  }) async {
     final phone = request.customer?.phone;
     final phoneCountry =
         phone != null ? NotchPayPhoneUtils.detectCountryCode(phone) : null;
     final deviceCountry =
         View.of(context).platformDispatcher.locale.countryCode;
     final resolvedCountry =
-        (countryCode ?? phoneCountry ?? deviceCountry ?? 'cm').toLowerCase();
+        (countryCode ?? phoneCountry ?? deviceCountry ?? defaultCountryCode)
+            .toLowerCase();
 
-    return showNotchPayCheckout(
+    final result = await showNotchPayCheckout(
       context,
       paymentService: payments,
       resourceService: resources,
@@ -209,6 +233,19 @@ class NotchPay {
       localizations: localizations,
       environment: environment,
     );
+
+    switch (result.status) {
+      case NotchPayCheckoutStatus.success:
+        if (result.payment != null) {
+          onSuccess?.call(result.payment!);
+        }
+      case NotchPayCheckoutStatus.cancelled:
+        onCancelled?.call();
+      case NotchPayCheckoutStatus.failed:
+        onError?.call(result.message ?? 'Payment failed');
+    }
+
+    return result;
   }
 
   /// Releases the underlying HTTP client's resources. Call this when this

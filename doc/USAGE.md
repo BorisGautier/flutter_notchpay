@@ -220,7 +220,58 @@ switch (result.status) {
 result.isSuccess; // shorthand for status == NotchPayCheckoutStatus.success
 ```
 
+### Optional callbacks
+
+As a convenience, you can provide callbacks instead of (or alongside)
+`await`-ing the returned `Future`:
+
+```dart
+await NotchPay.instance.checkout(
+  context,
+  request: request,
+  onSuccess: (payment) {
+    // Dispatch a BLoC event, navigate, etc.
+    context.read<OrderCubit>().markPaid(payment);
+  },
+  onCancelled: () => Navigator.of(context).pop(),
+  onError: (error) => ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text('$error'))),
+);
+```
+
+The callbacks are called **after** the sheet closes, before `checkout()`
+completes. The `Future` value always reflects the same outcome as the
+callback that was invoked — both styles are fully consistent.
+
 ## 6. Theming
+
+### Ready-made presets
+
+Four named factory constructors give you a polished theme in one line:
+
+| Factory | Primary | Surface | Notes |
+| --- | --- | --- | --- |
+| `NotchPayThemeData.darkMode()` | NotchPay violet `#5B2A86` | `#17181D` | Dark background variant of the default. |
+| `NotchPayThemeData.emerald()` | Emerald `#059669` | white | Great for eco / fintech brands. |
+| `NotchPayThemeData.purple()` | Deep purple `#7C3AED` | `#0F0A1E` | Premium dark look. |
+| `NotchPayThemeData.ocean()` | Sky blue `#0284C7` | `#0C1A2E` | Tech / banking feel. |
+
+```dart
+NotchPay.instance.checkout(
+  context,
+  request: request,
+  theme: NotchPayThemeData.emerald(),
+);
+```
+
+Every preset returns a plain `NotchPayThemeData` and is compatible with
+`copyWith()` for fine-tuning:
+
+```dart
+theme: NotchPayThemeData.ocean().copyWith(borderRadius: 12)
+```
+
+### Full custom theme
 
 ```dart
 NotchPay.instance.checkout(
@@ -573,7 +624,7 @@ convenient way to share models/serialization with your Flutter app. The
 directly on `NotchPayClient` + individual services if you need a
 Flutter-free backend usage.
 
-## 17. Testing your integration
+### Unit & Widget Testing (Mocked)
 
 Every constructor accepts an `httpClient`, so you can fully mock the
 network in your own tests exactly like this package's own test suite does:
@@ -593,5 +644,26 @@ final notchPay = NotchPay(
 );
 ```
 
+### Live Sandbox API Testing
+
+You can also run live integration tests directly against the real NotchPay Sandbox environment without hardcoding secrets in your source code:
+
+1. Export your test keys as environment variables:
+   ```bash
+   # Windows (PowerShell)
+   $env:NOTCHPAY_TEST_PUBLIC_KEY="pk_test_..."
+   $env:NOTCHPAY_TEST_PRIVATE_KEY="sk_test_..."
+
+   # Linux / macOS
+   export NOTCHPAY_TEST_PUBLIC_KEY="pk_test_..."
+   export NOTCHPAY_TEST_PRIVATE_KEY="sk_test_..."
+   ```
+
+2. Run the live test suite:
+   ```bash
+   flutter test test/live_api_test.dart
+   ```
+
 See this package's own `test/` and `integration_test/` folders for complete
-examples, including a full end-to-end widget test of the checkout sheet.
+examples, including full end-to-end widget tests of the checkout sheet.
+
